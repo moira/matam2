@@ -56,7 +56,7 @@ char* RemoveFirstAppearance(char* string, char* word) {
 		}
 		memcpy(ReducedString, string, substring-string);
 		memcpy(ReducedString+(substring-string), "\0", 1);
-    	strcat(ReducedString, substring+strlen(word));
+    		strcat(ReducedString, substring+strlen(word));
 		return ReducedString;
 	}
 }
