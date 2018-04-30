@@ -2,8 +2,8 @@
 
 typedef struct team {
 	const char* TeamName;
-	struct driver* FirstDriver;
-	struct driver* SecondDriver; 
+	Driver FirstDriver;
+	Driver SecondDriver;
 } *Team;
 
 Team TeamCreate(TeamStatus* status, char* name) {
@@ -15,7 +15,7 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->name = StringDuplicate(name);
 	team->FirstDriver = NULL;
 	team->SecondDriver = NULL;
-	TeamStatus = STATUS_OK;
+	status = STATUS_OK;
 	return team;
 }
 
