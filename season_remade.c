@@ -19,8 +19,8 @@ int charCount(char* string, char ch){
 	return number_of_ch;
 }
 
-/*splits string into array of substrings that were seperated with
-the delimiter in the original*/
+/*splits string into array of substrings that were separated with
+the delimiter in the original string*/
 char** stringSplit(char* string, int number_of_substrings, char delimiter){
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
