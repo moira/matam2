@@ -90,7 +90,7 @@ Driver* setDrivers(char** season_data, int number_of_drivers, Team* teams){
 Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	Season season = malloc(sizeof(*season));
 	int number_of_newline_chars = charCount(season_info, "\n");
-	number_of_rows = number_of_newline_chars+1;
+	number_of_rows = number_of_newline_chars;
 	char** season_data = stringSplit(season_info, number_of_rows, "\n");
 	season->year = getYear(season_data);
 	season->number_of_teams = getNumberOfTeams(number_of_rows);
