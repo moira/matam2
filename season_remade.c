@@ -43,7 +43,7 @@ int getNumberOfTeams(int number_of_rows){
 	return number_of_teams;
 }
 
-/*adds teams to the teams array of season*/
+/*adds teams to the teams field of a season*/
 Team* getTeams(char** season_data, int number_of_teams){
 	Team* teams = malloc(sizeof(*teams)*number_of_teams);
 	int team_counter = 0;
