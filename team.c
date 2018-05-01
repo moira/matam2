@@ -12,6 +12,7 @@ Team TeamCreate(TeamStatus* status, char* name) {
 		TeamStatus = MEMORY_ERROR;
 		return NULL;
 	}
+	//add teamdestroy on incorrect input?
 	team->name = StringDuplicate(name);
 	team->FirstDriver = NULL;
 	team->SecondDriver = NULL;
@@ -71,7 +72,7 @@ void TeamDestroy(Team team) {
 	free(team);
 }
 
-const char* StringDuplicate(const char* str) {
+static const char* StringDuplicate(const char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	return copy ? strcpy(copy, str) : NULL;
 }

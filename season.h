@@ -7,6 +7,7 @@
 
 #ifndef SEASON_H_
 #define SEASON_H_
+#define BUFF_SIZE = 256
 
 typedef struct season* Season;
 
