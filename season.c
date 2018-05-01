@@ -42,16 +42,27 @@ Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* stat
 		status = INVALID_POSITION;
 	} else {
 		Driver* drivers = SeasonGetDriversStandings(season);
-		return drivers[position];
+		return drivers[position-1];
 	}
 }
 
 Team* SeasonGetTeamsStandings(Season season) {
-	//sort teams
+	int count = season->NumberOfTeams;
+	TeamStatus status;
+	for (int i = 0; i < NumberOfTeams; i++) {
+		season->teams->points = TeamGetPoints(season->team, status);
+	}
+	quick_sort(season->teams, season->NumberOfTeams);
+	return season->teams;
 }
 
 Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
-	//sort teams
+	if (position <= 0 || position >= season->NumberOfTeams) {
+		status = INVALID_POSITION;
+	} else {
+		Team* teams = SeasonGetTeamsStandings(season);
+		return teams[position-1];
+	}
 }
 
 int SeasonGetNumberOfDrivers(Season season) {
@@ -60,10 +71,16 @@ int SeasonGetNumberOfDrivers(Season season) {
 
 int SeasonGetNumberOfTeams(Season season) {
 	return season->NumberOfTeams; //do we imply that season != Null?
-
 }
-SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 
+SeasonStatus SeasonAddRaceResult(Season season, int* results) {
+	for (int i = 0; i < NumberOfDrivers; i++) {
+		for (int j = 0; j < NumberOfDrivers; j++) {
+			if (results[j] == season->drivers[i]->DriverId) {
+				season->drivers[i] += NumberOfDrivers-j-1;
+			}
+		}
+	}
 }
 
 const int CountLines(char* str) {
