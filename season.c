@@ -79,15 +79,11 @@ Driver* SeasonGetDriversStandings(Season season) {
 }
 
 Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
-<<<<<<< HEAD
 	if (season == NULL) {
 		status = SEASON_NULL_PTR;
 		return NULL;
 	}
-	if (position <= 0 || position >= season->number_of_drivers) {
-=======
 	if (position <= 0 || position > season->number_of_drivers) {
->>>>>>> e044b28aa64016095f0a13738453576fc255ecd5
 		status = INVALID_POSITION;
 		return NULL;
 	} else {
@@ -150,7 +146,7 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 // 	return count;
 // }
 
-const (int* items, int number_of_items)
+const QuickSort(int* items, int number_of_items)
 {
    int p, b = 1; 
    int t = number_of_items - 1;
@@ -167,12 +163,6 @@ const (int* items, int number_of_items)
          swap(&items[b++], &items[t--]);
    }
    swap(&items[0], &items[t]);
-<<<<<<< HEAD
    QuickSort(items, t);
    QuickSort(items + t + 1, items – t - 1);
 }
-=======
-   quick_sort(items, t);
-   quick_sort(items + t + 1, items – t - 1);
-}
->>>>>>> e044b28aa64016095f0a13738453576fc255ecd5
