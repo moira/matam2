@@ -98,7 +98,7 @@ Team* SeasonGetTeamsStandings(Season season) {
 }
 
 Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
-	if (position <= 0 || position >= season->number_of_teams) {
+	if (position <= 0 || position > season->number_of_teams) {
 		status = INVALID_POSITION;
 	} else {
 		Team* teams = SeasonGetTeamsStandings(season);
