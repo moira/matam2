@@ -17,7 +17,7 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->name = StringDuplicate(name);
 	team->FirstDriver = NULL;
 	team->SecondDriver = NULL;
-	team->points = 0;
+	team->points = 0; //WRONG
 	status = STATUS_OK;
 	return team;
 }
@@ -58,21 +58,21 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 	}
 }
 
-int TeamGetPoints(Team team, TeamStatus *status) {
-	if (team == NULL) {
-		status = NULL;
-	} else {
-		int points = 0;
-		if (team->FirstDriver != NULL) {
-			points += FirstDriver->points;
-			if (team->SecondDriver != NULL) {
-				points += SecondDriver->points;
-			}
-		}
-		status = STATUS_OK;
-		return points;
-	}
-}
+// int TeamGetPoints(Team team, TeamStatus *status) {
+// 	if (team == NULL) {
+// 		status = NULL;
+// 	} else {
+// 		int points = 0;
+// 		if (team->FirstDriver != NULL) {
+// 			points += FirstDriver->points;
+// 			if (team->SecondDriver != NULL) {
+// 				points += SecondDriver->points;
+// 			}
+// 		}
+// 		status = STATUS_OK;
+// 		return points;
+// 	}
+// }
 
 void TeamDestroy(Team team) {
 	free(team->FirstDriver);

@@ -39,7 +39,7 @@ const char* DriverGetName(Driver driver) {
 
 int DriverGetId(Driver driver) {
 	if (driver == NULL) {
-		return NULL;
+		return 0;
 	} else {
 		return driver->driverId;
 	}
