@@ -39,6 +39,7 @@ int main () {
 	free(test5);
 	free(test6);
 	free(test7);
+	free(test8);
 	return 0;
 }
 
@@ -52,11 +53,11 @@ char* RemoveFirstAppearance(char* string, char* word) {
 	} else {
 		char* ReducedString = malloc(strlen(string)-strlen(word)+1);
 		if (ReducedString == NULL) {
-			return NULL; //?????
+			return NULL;
 		}
 		memcpy(ReducedString, string, substring-string);
 		memcpy(ReducedString+(substring-string), "\0", 1);
-    		strcat(ReducedString, substring+strlen(word));
+		strcat(ReducedString, substring+strlen(word));
 		return ReducedString;
 	}
 }
