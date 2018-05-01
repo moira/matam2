@@ -67,7 +67,7 @@ Season SeasonCreate(SeasonStatus* status,const char* season_info){
 void SeasonDestroy(Season season) {
 	int counter = season->number_of_teams;
 	for (int i = 0; i < counter; i++) {
-		TeamDestroy(season->Team[i])
+		TeamDestroy(season->teams[i])
 	}
 	free(season->drivers);
 	free(season);
@@ -79,7 +79,7 @@ Driver* SeasonGetDriversStandings(Season season) {
 }
 
 Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
-	if (position <= 0 || position >= season->number_of_drivers) {
+	if (position <= 0 || position > season->number_of_drivers) {
 		status = INVALID_POSITION;
 	} else {
 		Driver* drivers = SeasonGetDriversStandings(season);
