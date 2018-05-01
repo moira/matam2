@@ -19,8 +19,8 @@ int charCount(char* string, char ch){
 	return number_of_ch;
 }
 
-/*splits string into array of substrings that were seperated with
-the delimiter in the original*/
+/*splits string into array of substrings that were separated with
+the delimiter in the original string*/
 char** stringSplit(char* string, int number_of_substrings, char delimiter){
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
@@ -43,7 +43,7 @@ int getNumberOfTeams(int number_of_rows){
 	return number_of_teams;
 }
 
-/*adds teams to the teams array of season*/
+/*adds teams to the teams field of a season*/
 Team* getTeams(char** season_data, int number_of_teams){
 	Team* teams = malloc(sizeof(*teams)*number_of_teams);
 	int team_counter = 0;
@@ -90,7 +90,7 @@ Driver* setDrivers(char** season_data, int number_of_drivers, Team* teams){
 Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	Season season = malloc(sizeof(*season));
 	int number_of_newline_chars = charCount(season_info, "\n");
-	number_of_rows = number_of_newline_chars+1;
+	number_of_rows = number_of_newline_chars;
 	char** season_data = stringSplit(season_info, number_of_rows, "\n");
 	season->year = getYear(season_data);
 	season->number_of_teams = getNumberOfTeams(number_of_rows);
