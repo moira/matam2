@@ -74,13 +74,18 @@ void SeasonDestroy(Season season) {
 }
 
 Driver* SeasonGetDriversStandings(Season season) {
-	quick_sort(season->drivers, season->number_of_drivers);
+	QuickSort(season->drivers, season->number_of_drivers);
 	return season->drivers;
 }
 
 Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
+	if (season == NULL) {
+		status = SEASON_NULL_PTR;
+		return NULL;
+	}
 	if (position <= 0 || position >= season->number_of_drivers) {
 		status = INVALID_POSITION;
+		return NULL;
 	} else {
 		Driver* drivers = SeasonGetDriversStandings(season);
 		return drivers[position-1];
@@ -93,7 +98,7 @@ Team* SeasonGetTeamsStandings(Season season) {
 	for (int i = 0; i < number_of_teams; i++) {
 		season->teams->points = TeamGetPoints(season->team, status);
 	}
-	quick_sort(season->teams, season->number_of_teams);
+	QuickSort(season->teams, season->number_of_teams);
 	return season->teams;
 }
 
@@ -107,11 +112,17 @@ Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) 
 }
 
 int SeasonGetNumberOfDrivers(Season season) {
-	return season->number_of_drivers; //do we imply that season != Null?
+	if (season == NULL) {
+		return 0;
+	}
+	return season->number_of_drivers;
 }
 
 int SeasonGetNumberOfTeams(Season season) {
-	return season->number_of_teams; //do we imply that season != Null?
+	if (season == NULL) {
+		return 0;
+	}
+	return season->number_of_teams;
 }
 
 SeasonStatus SeasonAddRaceResult(Season season, int* results) {
@@ -135,7 +146,7 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 // 	return count;
 // }
 
-const quick_sort(int* items, int number_of_items)
+const (int* items, int number_of_items)
 {
    int p, b = 1; 
    int t = number_of_items - 1;
@@ -152,6 +163,6 @@ const quick_sort(int* items, int number_of_items)
          swap(&items[b++], &items[t--]);
    }
    swap(&items[0], &items[t]);
-   quick_sort(items, t);
-   quick_sort(items + t + 1, items – t - 1);
+   QuickSort(items, t);
+   QuickSort(items + t + 1, items – t - 1);
 }

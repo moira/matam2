@@ -70,7 +70,7 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 	} else if (driver == NULL) {
 		return NULL;
 	} else () {
-		driver->points+=position; //check
+		driver->points += position; //check
 		return STATUS_OK;
 	}
 }
@@ -78,7 +78,7 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 int DriverGetPoints(Driver driver, DriverStatus* status) { //there's a mistake in the hw description
 	if (driver == NULL) {
 		status = INVALID_DRIVER;
-		return NULL;
+		return 0;
 	} else {
 		status = DRIVER_STATUS_OK;
 		return driver -> points;

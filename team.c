@@ -4,6 +4,7 @@ typedef struct team {
 	const char* TeamName;
 	Driver FirstDriver;
 	Driver SecondDriver;
+	int points;
 } *Team;
 
 Team TeamCreate(TeamStatus* status, char* name) {
@@ -16,6 +17,7 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->name = StringDuplicate(name);
 	team->FirstDriver = NULL;
 	team->SecondDriver = NULL;
+	team->points = 0;
 	status = STATUS_OK;
 	return team;
 }
@@ -56,7 +58,7 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 	}
 }
 
-int TeamGetPoints(Team  team, TeamStatus *status) {
+int TeamGetPoints(Team team, TeamStatus *status) {
 	if (team == NULL) {
 		status = NULL;
 	} else {
