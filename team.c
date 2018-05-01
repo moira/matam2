@@ -58,10 +58,17 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 
 int TeamGetPoints(Team  team, TeamStatus *status) {
 	if (team == NULL) {
-		return NULL;
+		status = NULL;
 	} else {
-		TeamStatus = STATUS_OK;
-		/////////////////////////////
+		int points = 0;
+		if (team->FirstDriver != NULL) {
+			points += FirstDriver->points;
+			if (team->SecondDriver != NULL) {
+				points += SecondDriver->points;
+			}
+		}
+		status = STATUS_OK;
+		return points;
 	}
 }
 
