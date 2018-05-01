@@ -8,20 +8,20 @@ typedef struct season{
 	Driver* drivers;
 }*Season;
 
-// char** stringSplit(char* string, int* number_of_strings){
-// 	*number_of_strings = 1;
-// 	char** string_array = NULL;
-// 	int i = 1;
-// 	char* token = strtok(string, "\n")
-// 	*string_array = token;
-// 	while(token != NULL){
-// 		token = strtok(NULL, "\n");
-// 		*(string_array+i) = token;
-// 		*number_of_strings++;
-// 		i++;
-// 	}
-// 	return string_array;
-// }
+char** stringSplit(char* string, int* number_of_strings){
+	*number_of_strings = 1;
+	char** string_array = NULL;
+	int i = 1;
+	char* token = strtok(string, "\n")
+	*string_array = token;
+	while(token != NULL){
+		token = strtok(NULL, "\n");
+		*(string_array+i) = token;
+		*number_of_strings++;
+		i++;
+	}
+	return string_array;
+}
 
 Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	Season season = malloc(sizeof(*season));
@@ -124,16 +124,16 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	}
 }
 
-const int CountLines(char* str) {
-	int length = strlen(str);
-	int count = 0;
-	for(int i = 0; i < strlen(str); i++) {
-		if (str[i] == '\n') {
-			count++;
-		}
-	}
-	return count;
-}
+// const int CountLines(char* str) {
+// 	int length = strlen(str);
+// 	int count = 0;
+// 	for(int i = 0; i < strlen(str); i++) {
+// 		if (str[i] == '\n') {
+// 			count++;
+// 		}
+// 	}
+// 	return count;
+// }
 
 const quick_sort(int* items, int number_of_items)
 {
