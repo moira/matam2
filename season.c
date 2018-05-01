@@ -1,4 +1,7 @@
 #include "season.h"
+#include <string.h>
+
+const QuickSort(int* items, int number_of_items);
 
 typedef struct season{
 	int year;

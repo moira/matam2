@@ -32,6 +32,9 @@ int main () {
 	//identical strings
 	char* test8 = RemoveFirstAppearance("ababa", "ababa");
 	printf ("remove ababa from ababa: %s\n", test8);
+	//just two empty strings
+	char* test9 = RemoveFirstAppearance("", ""); //? https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=182 check once more
+	printf ("remove ' ' from ' ': %s\n", test9);
 	free(test1);
 	free(test2);
 	free(test3);
@@ -40,6 +43,7 @@ int main () {
 	free(test6);
 	free(test7);
 	free(test8);
+	free(test9);
 	return 0;
 }
 

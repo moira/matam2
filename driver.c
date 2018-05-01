@@ -17,7 +17,7 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	driver->driver_name = StringDuplicate(driver_name);
 	driver->driverId = driverId;
 	driver->team = NULL;
-	driver->points = NULL;
+	driver->points = 0;
 	driver->season = NULL;
 	status = DRIVER_STATUS_OK;
 	return driver;
@@ -69,7 +69,7 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 		return SEASON_NOT_ASSIGNED;
 	} else if (driver == NULL) {
 		return NULL;
-	} else () {
+	} else {
 		driver->points += position; //check
 		return STATUS_OK;
 	}

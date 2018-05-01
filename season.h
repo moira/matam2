@@ -15,7 +15,6 @@ typedef struct season* Season;
 
 #include"team.h"
 #include"driver.h"
-#include <string.h>
 
 typedef enum seasonStatus {
 	SEASON_OK,
@@ -32,7 +31,5 @@ Team* SeasonGetTeamsStandings(Season season);
 int SeasonGetNumberOfDrivers(Season season);
 int SeasonGetNumberOfTeams(Season season);
 SeasonStatus SeasonAddRaceResult(Season season, int* results);
-const int CountLines(char* str);
-const quick_sort(int* items, int number_of_items);
 
 #endif /* SEASON_H_ */

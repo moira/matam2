@@ -1,5 +1,7 @@
 #include "team.h"
 
+static const char* StringDuplicate(const char* str);
+
 typedef struct team {
 	const char* TeamName;
 	Driver FirstDriver;
@@ -13,7 +15,10 @@ Team TeamCreate(TeamStatus* status, char* name) {
 		TeamStatus = MEMORY_ERROR;
 		return NULL;
 	}
-	//add teamdestroy on incorrect input?
+	if (name == NULL) {
+		TeamDestroy(team);
+		return NULL;
+	}
 	team->name = StringDuplicate(name);
 	team->FirstDriver = NULL;
 	team->SecondDriver = NULL;
