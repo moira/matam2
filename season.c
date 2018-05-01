@@ -1,12 +1,53 @@
 #include "season.h"
 
-typedef struct season {
+typedef struct season{
 	int year;
-	int NumberOfTeams;
+	int number_of_teams;
 	Team* teams;
-	int NumberOfDrivers;
+	int number_of_drivers;
 	Driver* drivers;
-} *Season
+}*Season;
+
+// char** stringSplit(char* string, int* number_of_strings){
+// 	*number_of_strings = 1;
+// 	char** string_array = NULL;
+// 	int i = 1;
+// 	char* token = strtok(string, "\n")
+// 	*string_array = token;
+// 	while(token != NULL){
+// 		token = strtok(NULL, "\n");
+// 		*(string_array+i) = token;
+// 		*number_of_strings++;
+// 		i++;
+// 	}
+// 	return string_array;
+// }
+
+Season SeasonCreate(SeasonStatus* status,const char* season_info){
+	Season season = malloc(sizeof(*season));
+	int number_of_rows;
+	char** row_array = stringSplit(season_info, &number_of_rows);
+	season->year = atol(*row_array);
+	season->number_of_drivers = (number_of_rows-1)/3;
+	int none_counter = 0;
+	for(int i = 0; i < number_of_rows; i++){
+		if(strcmp(row_array[i], "None") == 0){
+			none_counter++;
+		}
+	}
+	int number_of_drivers = 2 * team_counter - none_counter;
+	int driver_counter = 0;
+	for(int i = 1; i < number_of_rows; i+=3){
+		season->teams[team_counter] = teamCreate(row_array[i]);
+		if(!strcmp(row_array[i+1], "None")){
+			season->drivers[driver_counter] = driverCreate(row_array[i+1], driver_counter+1);
+		}
+		if(!strcmp(row_array[i+1], "None")){
+			season->drivers[driver_counter] = driverCreate(row_array[i+1], driver_counter+1);
+		}
+	}
+	return season;
+}
 
 Season SeasonCreate(SeasonStatus* status,const char* season_info) {
 	Season season = malloc(sizeof(*season));
@@ -24,7 +65,7 @@ Season SeasonCreate(SeasonStatus* status,const char* season_info) {
 }
 
 void SeasonDestroy(Season season) {
-	int counter = season->NumberOfTeams;
+	int counter = season->number_of_teams;
 	for (int i = 0; i < counter; i++) {
 		TeamDestroy(season->Team[i])
 	}
@@ -33,12 +74,12 @@ void SeasonDestroy(Season season) {
 }
 
 Driver* SeasonGetDriversStandings(Season season) {
-	quick_sort(season->drivers, season->NumberOfDrivers);
+	quick_sort(season->drivers, season->number_of_drivers);
 	return season->drivers;
 }
 
 Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
-	if (position <= 0 || position >= season->NumberOfDrivers) {
+	if (position <= 0 || position >= season->number_of_drivers) {
 		status = INVALID_POSITION;
 	} else {
 		Driver* drivers = SeasonGetDriversStandings(season);
@@ -47,17 +88,17 @@ Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* stat
 }
 
 Team* SeasonGetTeamsStandings(Season season) {
-	int count = season->NumberOfTeams;
+	int count = season->number_of_teams;
 	TeamStatus status;
-	for (int i = 0; i < NumberOfTeams; i++) {
+	for (int i = 0; i < number_of_teams; i++) {
 		season->teams->points = TeamGetPoints(season->team, status);
 	}
-	quick_sort(season->teams, season->NumberOfTeams);
+	quick_sort(season->teams, season->number_of_teams);
 	return season->teams;
 }
 
 Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
-	if (position <= 0 || position >= season->NumberOfTeams) {
+	if (position <= 0 || position >= season->number_of_teams) {
 		status = INVALID_POSITION;
 	} else {
 		Team* teams = SeasonGetTeamsStandings(season);
@@ -66,18 +107,18 @@ Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) 
 }
 
 int SeasonGetNumberOfDrivers(Season season) {
-	return season->NumberOfDrivers; //do we imply that season != Null?
+	return season->number_of_drivers; //do we imply that season != Null?
 }
 
 int SeasonGetNumberOfTeams(Season season) {
-	return season->NumberOfTeams; //do we imply that season != Null?
+	return season->number_of_teams; //do we imply that season != Null?
 }
 
 SeasonStatus SeasonAddRaceResult(Season season, int* results) {
-	for (int i = 0; i < NumberOfDrivers; i++) {
-		for (int j = 0; j < NumberOfDrivers; j++) {
+	for (int i = 0; i < number_of_drivers; i++) {
+		for (int j = 0; j < number_of_drivers; j++) {
 			if (results[j] == season->drivers[i]->DriverId) {
-				season->drivers[i] += NumberOfDrivers-j-1;
+				season->drivers[i] += number_of_drivers-j-1;
 			}
 		}
 	}
