@@ -49,25 +49,25 @@ Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	return season;
 }
 
-Season SeasonCreate(SeasonStatus* status,const char* season_info) {
-	Season season = malloc(sizeof(*season));
-	int length = (CountLines(season_info)-EXTRA_LINES)/LINES_PER_TEAM;
-	Team* teams = malloc(sizeof(*Team)*length);
-	if (teams == NULL) {
-		return ////
-	}
-	Driver* drivers = malloc(sizeof(*Driver)*length*DRIVER_PER_TEAM);
-	if (drivers == NULL) {
-		free(teams) //destroy? what?
-		return ////
-	}
-	return season;
-}
+// Season SeasonCreate(SeasonStatus* status,const char* season_info) {
+// 	Season season = malloc(sizeof(*season));
+// 	int length = (CountLines(season_info)-EXTRA_LINES)/LINES_PER_TEAM;
+// 	Team* teams = malloc(sizeof(*Team)*length);
+// 	if (teams == NULL) {
+// 		return ////
+// 	}
+// 	Driver* drivers = malloc(sizeof(*Driver)*length*DRIVER_PER_TEAM);
+// 	if (drivers == NULL) {
+// 		free(teams) //destroy? what?
+// 		return ////
+// 	}
+// 	return season;
+// }
 
 void SeasonDestroy(Season season) {
 	int counter = season->number_of_teams;
 	for (int i = 0; i < counter; i++) {
-		TeamDestroy(season->Team[i])
+		TeamDestroy(season->teams[i])
 	}
 	free(season->drivers);
 	free(season);
@@ -79,11 +79,15 @@ Driver* SeasonGetDriversStandings(Season season) {
 }
 
 Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
+<<<<<<< HEAD
 	if (season == NULL) {
 		status = SEASON_NULL_PTR;
 		return NULL;
 	}
 	if (position <= 0 || position >= season->number_of_drivers) {
+=======
+	if (position <= 0 || position > season->number_of_drivers) {
+>>>>>>> e044b28aa64016095f0a13738453576fc255ecd5
 		status = INVALID_POSITION;
 		return NULL;
 	} else {
@@ -103,7 +107,7 @@ Team* SeasonGetTeamsStandings(Season season) {
 }
 
 Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
-	if (position <= 0 || position >= season->number_of_teams) {
+	if (position <= 0 || position > season->number_of_teams) {
 		status = INVALID_POSITION;
 	} else {
 		Team* teams = SeasonGetTeamsStandings(season);
@@ -163,6 +167,12 @@ const (int* items, int number_of_items)
          swap(&items[b++], &items[t--]);
    }
    swap(&items[0], &items[t]);
+<<<<<<< HEAD
    QuickSort(items, t);
    QuickSort(items + t + 1, items – t - 1);
 }
+=======
+   quick_sort(items, t);
+   quick_sort(items + t + 1, items – t - 1);
+}
+>>>>>>> e044b28aa64016095f0a13738453576fc255ecd5
