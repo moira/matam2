@@ -49,20 +49,20 @@ Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	return season;
 }
 
-Season SeasonCreate(SeasonStatus* status,const char* season_info) {
-	Season season = malloc(sizeof(*season));
-	int length = (CountLines(season_info)-EXTRA_LINES)/LINES_PER_TEAM;
-	Team* teams = malloc(sizeof(*Team)*length);
-	if (teams == NULL) {
-		return ////
-	}
-	Driver* drivers = malloc(sizeof(*Driver)*length*DRIVER_PER_TEAM);
-	if (drivers == NULL) {
-		free(teams) //destroy? what?
-		return ////
-	}
-	return season;
-}
+// Season SeasonCreate(SeasonStatus* status,const char* season_info) {
+// 	Season season = malloc(sizeof(*season));
+// 	int length = (CountLines(season_info)-EXTRA_LINES)/LINES_PER_TEAM;
+// 	Team* teams = malloc(sizeof(*Team)*length);
+// 	if (teams == NULL) {
+// 		return ////
+// 	}
+// 	Driver* drivers = malloc(sizeof(*Driver)*length*DRIVER_PER_TEAM);
+// 	if (drivers == NULL) {
+// 		free(teams) //destroy? what?
+// 		return ////
+// 	}
+// 	return season;
+// }
 
 void SeasonDestroy(Season season) {
 	int counter = season->number_of_teams;
