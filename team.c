@@ -1,9 +1,10 @@
 #include "team.h"
+#include <string.h>
 
-static const char* StringDuplicate(char* str);
+static const char* TeamStringDuplicate(char* str);
 
 typedef struct team {
-	const char* team_name;
+	const char* name;
 	Driver first_driver;
 	Driver second_driver;
 	Driver best_driver;
@@ -25,10 +26,10 @@ Team TeamCreate(TeamStatus* status, char* name) {
 		}
 		return NULL;
 	}
-	team->name = StringDuplicate(name);
-	team->FirstDriver = NULL;
-	team->SecondDriver = NULL;
-	team->BestDriver = NULL;
+	team->name = TeamStringDuplicate(name);
+	team->first_driver = NULL;
+	team->second_driver = NULL;
+	team->best_driver = NULL;
 	team->points = 0;
 	if (status != NULL) {
 		*status = STATUS_OK;
@@ -40,11 +41,11 @@ TeamStatus TeamAddDriver(Team team, Driver driver) {
 	if (team == NULL || driver = NULL) {
 		return TEAM_NULL_PTR;
 	}
-	if (team->FirstDriver == NULL) {
-		team->FirstDriver = driver;
+	if (team->first_driver == NULL) {
+		team->first_driver = driver;
 		return STATUS_OK;
-	} else if (team->SecondDriver == NULL) {
-		team->SecondDriver = driver;
+	} else if (team->second_driver == NULL) {
+		team->second_driver = driver;
 		return STATUS_OK;
 	} else {
 		return TEAM_FULL;
@@ -64,9 +65,9 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 		return NULL;
 	}
 	if (driver_number == FIRST_DRIVER) {
-		return team->FirstDriver;
+		return team->first_driver;
 	} else if (driver_number == SECOND_DRIVER) {
-		return team->SecondDriver;
+		return team->second_driver;
 	} else {
 		return NULL;
 	}
@@ -80,10 +81,10 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 		return 0;
 	} else {
 		int points = 0;
-		if (team->FirstDriver != NULL) {
-			points += FirstDriver->points;
-			if (team->SecondDriver != NULL) {
-				points += SecondDriver->points;
+		if (team->first_driver != NULL) {
+			points += first_driver->points;
+			if (team->second_driver != NULL) {
+				points += second_driver->points;
 			}
 		}
 		if (status != NULL) {
@@ -101,7 +102,7 @@ void TeamDestroy(Team team) {
 	free(team);
 }
 
-static const char* StringDuplicate(char* str) {
+static const char* TeamStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	return copy ? strcpy(copy, str) : NULL;
 }

@@ -1,31 +1,46 @@
 #include "driver.h"
+#include <string.h>
 
-typedef struct driver_t {
+static const char* DriverStringDuplicate(char* str);
+
+typedef struct driver {
 	int driverId;
 	const char* driver_name;
 	Team team;
-	int points;//???
+	int points;
+	int last_result;
 	Season season;
 } *Driver;
 
 Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	Driver driver = malloc(sizeof(*driver));
 	if (driver == NULL) {
-		status = DRIVER_MEMORY_ERROR;
+		if (status != NULL) {
+			*status = DRIVER_MEMORY_ERROR;
+		}
 		return NULL;
 	}
-	driver->driver_name = StringDuplicate(driver_name);
+	if (driver_name = NULL || driverId < 0) {
+		if (driver != NULL) {
+			status = DRIVER_MEMORY_ERROR;
+		}
+		free(driver);
+		return NULL;
+	}
+	driver->driver_name = DriverStringDuplicate(driver_name);
 	driver->driverId = driverId;
 	driver->team = NULL;
 	driver->points = 0;
+	driver->last_result = 0;
 	driver->season = NULL;
-	status = DRIVER_STATUS_OK;
+	if (status != NULL) {
+		status = DRIVER_STATUS_OK;
+	}
 	return driver;
 }
 
 void DriverDestroy(Driver driver) {
 	free(driver->driver_name);
-	//free(driver->driver_points);//should this be an integer or a pointer?
 	free(driver);
 }
 
@@ -45,7 +60,7 @@ int DriverGetId(Driver driver) {
 	}
 }
 
-Team  DriverGetTeam(Driver driver) {
+Team DriverGetTeam(Driver driver) {
 	if (driver == NULL) {
 		return NULL;
 	} else {
@@ -68,20 +83,28 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 	} else if (driver->season == NULL) {
 		return SEASON_NOT_ASSIGNED;
 	} else if (driver == NULL) {
-		return NULL; //Should return INVALID_DRIVER instead
+		return INVALID_DRIVER;
 	} else {
-		driver->points += position; //check
+		driver->points += position;
 		return STATUS_OK;
 	}
 }
 
-int DriverGetPoints(Driver driver, DriverStatus* status) { //there's a mistake in the hw description
+int DriverGetPoints(Driver driver, DriverStatus* status) {
 	if (driver == NULL) {
-		status = INVALID_DRIVER;
-		return 0;//returning negative value could be better
+		if (status != NULL) {
+			*status = INVALID_DRIVER;
+		}
+		return 0;
 	} else {
-		status = DRIVER_STATUS_OK;
+		if (status != NULL) {
+			*status = DRIVER_STATUS_OK;
+		}
 		return driver -> points;
 	}
 }
 
+static const char* DriverStringDuplicate(char* str) {
+	char* copy = malloc(strlen(str) + 1);
+	return copy ? strcpy(copy, str) : NULL;
+}
