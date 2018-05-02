@@ -68,7 +68,7 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 	} else if (driver->season == NULL) {
 		return SEASON_NOT_ASSIGNED;
 	} else if (driver == NULL) {
-		return NULL;
+		return NULL; //Should return INVALID_DRIVER instead
 	} else {
 		driver->points += position; //check
 		return STATUS_OK;
@@ -78,7 +78,7 @@ DriverStatus DriverAddRaceResult(Driver driver, int position) {
 int DriverGetPoints(Driver driver, DriverStatus* status) { //there's a mistake in the hw description
 	if (driver == NULL) {
 		status = INVALID_DRIVER;
-		return 0;
+		return 0;//returning negative value could be better
 	} else {
 		status = DRIVER_STATUS_OK;
 		return driver -> points;

@@ -112,6 +112,16 @@ Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* stat
 Team* SeasonGetTeamsStandings(Season season) {
 	return season->teams;
 }
+ 
+// Team* SeasonGetTeamsStandings(Season season) {
+// 	int count = season->number_of_teams;
+// 	TeamStatus status;
+// 	for (int i = 0; i < number_of_teams; i++) {
+// 		season->teams->points = TeamGetPoints(season->team, status);
+// 	}
+// 	QuickSort(season->teams, season->number_of_teams);
+// 	return season->teams;
+// }
 
 Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
 	if (position <= 0 || position > season->number_of_teams) {
@@ -158,9 +168,8 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 }
 
 
-const void QuickSort(int* items, int number_of_items)
-{
-   int p, b = 1; 
+const void QuickSort(void* items, int number_of_items) {
+   int p, b = 1;
    int t = number_of_items - 1;
    if (number_of_items < 2)
       return;
