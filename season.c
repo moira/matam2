@@ -142,9 +142,8 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 }
 
 
-const QuickSort(int* items, int number_of_items) //where is type? Still have no idea we do we need to sort
-{
-   int p, b = 1; 
+const void QuickSort(void* items, int number_of_items)
+   int p, b = 1;
    int t = number_of_items - 1;
    if (number_of_items < 2)
       return;
