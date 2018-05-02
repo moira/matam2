@@ -159,32 +159,35 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	int count = season->number_of_teams;
 	TeamStatus status;
 	for (int i = 0; i < number_of_teams; i++) {
-		season->teams->points = TeamGetPoints(season->team, status);
+		season->teams+i->points = TeamGetPoints(season->team+i, status);
 	}
+
 	QuickSort(season->teams, season->number_of_teams);
 	SeasonResolveTiesForDrivers(Season season, int* results);
 	SeasonResolveTiesForTeams(Season season, int* results);
-	///
-}
 
+}
 
 const void QuickSort(void* items, int number_of_items) {
    int p, b = 1;
    int t = number_of_items - 1;
-   if (number_of_items < 2)
+   if (number_of_items < 2) {
       return;
+   }
    swap(&items[0], &items[number_of_items/2]);
    p = items[0]->points;
    while(b <= t) {
-      while(t >= b && items[t]->points >= p )
+      while(t >= b && items[t]->points >= p) {
          t--;
-      while(b <= t && items[b]->points < p)
-         b++; 
-      if (b < t) 
+      }
+      while(b <= t && items[b]->points < p) {
+         b++;
+      }
+      if (b < t) {
          swap(&items[b++], &items[t--]);
+      }
    }
    swap(&items[0], &items[t]);
    QuickSort(items, t);
    QuickSort(items + t + 1, items – t - 1);
 }
-
