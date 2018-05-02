@@ -97,7 +97,7 @@ Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* stat
 		return drivers[position-1];
 	}
 }
-
+ 
 // Team* SeasonGetTeamsStandings(Season season) {
 // 	int count = season->number_of_teams;
 // 	TeamStatus status;
@@ -142,7 +142,7 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 }
 
 
-const QuickSort(int* items, int number_of_items)
+const QuickSort(int* items, int number_of_items) //where is type? Still have no idea we do we need to sort
 {
    int p, b = 1; 
    int t = number_of_items - 1;
