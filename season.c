@@ -3,7 +3,6 @@
 
 //https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=182 statuses?
 
-
 const QuickSort(int* items, int number_of_items);
 
 typedef struct season{
@@ -117,8 +116,7 @@ Team* SeasonGetTeamsStandings(Season season) {
 // 	int count = season->number_of_teams;
 // 	TeamStatus status;
 // 	for (int i = 0; i < number_of_teams; i++) {
-// 		season->teams->points = TeamGetPoints(season->team, status);
-// 	}
+// 		season->teams->points = TeamGetPoints(season->team, status);// 	}
 // 	QuickSort(season->teams, season->number_of_teams);
 // 	return season->teams;
 // }
@@ -154,31 +152,61 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 			}
 		}
 	}
-	QuickSort(season->drivers, season->number_of_drivers);
-
+	QuickSort(season->drivers, season->number_of_drivers, points);
+	DriverTiebreakSort(season, results);
+	
 	int count = season->number_of_teams;
 	TeamStatus status;
 	for (int i = 0; i < number_of_teams; i++) {
-		season->teams->points = TeamGetPoints(season->team, status);
+		season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);
 	}
-	QuickSort(season->teams, season->number_of_teams);
-	SeasonResolveTiesForDrivers(Season season, int* results);
-	SeasonResolveTiesForTeams(Season season, int* results);
-	///
+	QuickSort(season->teams, season->number_of_teams, points);
+}	
+
+
+void DriverTiebreakSort(Season season, int* results){
+	int sequence_length = 1; 
+	for(int i = 1; i < season->number_of_drivers; i++){
+		int current_driver_points = DriverGetPoints(season->*(drivers+i));
+		int previous_driver_points = DriverGetPoints(season->*(drivers+i-1));
+		if(current_driver_points == previous_driver_points){
+			sequence_length++;
+		}
+		else{
+			QuickSort(season->(drivers+i), sequence_length, last_result);
+			sequence_length = 1;
+			i++;
+		}
+	}
 }
 
+void TeamTiebreakSort(Season season, int* results){
+		int sequence_length = 1; 
+	for(int i = 1; i < season->number_of_teams; i++){
+		int current_team_points = TeamGetPoints(season->*(teams+i));
+		int previous_team_points = TeamGetPoints(season->*(teams+i-1));
+		if(current_team_points == previous_team_points){
+			sequence_length++;
+		}
+		else{
+			QuickSort(season->(teams+i), sequence_length, best_result);
+			sequence_length = 1;
+			i++;
+		}
+	}
+}
 
-const void QuickSort(void* items, int number_of_items) {
+const void QuickSort(void* items, int number_of_items, size_t field_type) {
    int p, b = 1;
    int t = number_of_items - 1;
    if (number_of_items < 2)
       return;
    swap(&items[0], &items[number_of_items/2]);
-   p = items[0]->points;
+   p = items[0]->field_type;
    while(b <= t) {
-      while(t >= b && items[t]->points >= p )
+      while(t >= b && items[t]->field_type >= p )
          t--;
-      while(b <= t && items[b]->points < p)
+      while(b <= t && items[b]->field_type < p)
          b++; 
       if (b < t) 
          swap(&items[b++], &items[t--]);
@@ -186,5 +214,18 @@ const void QuickSort(void* items, int number_of_items) {
    swap(&items[0], &items[t]);
    QuickSort(items, t);
    QuickSort(items + t + 1, items – t - 1);
+}
+
+void getBestResultsForTeams(Season season, int number_of_teams){
+	for(int i = 0; i < number_of_teams; i++){
+		int first_driver_last_result = season->*(teams+i)->first_driver->last_result;
+		int second_driver_last_result = season->*(teams+i)->first_driver->last_result;
+		if (first_driver_last_result > second_driver_last_result){
+			season->*(teams+i)->best_result = first_driver_last_result;
+		}
+		else{
+			season->*(teams+i)->best_driver = second_driver_last_result;
+		}
+	}
 }
 
