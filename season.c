@@ -1,6 +1,9 @@
 #include "season.h"
 #include <string.h>
 
+//https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=182 statuses?
+
+
 const QuickSort(int* items, int number_of_items);
 
 typedef struct season{
@@ -159,3 +162,4 @@ const QuickSort(int* items, int number_of_items)
    QuickSort(items, t);
    QuickSort(items + t + 1, items – t - 1);
 }
+
