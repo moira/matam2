@@ -110,7 +110,8 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	TeamTiebreakSort(season, results);
 }	
 
-
+/*sorts drivers in case of an equal number of
+points of different drivers in season*/
 void DriverTiebreakSort(Season season){
 	int sequence_length = 1; 
 	for(int i = 1; i < season->number_of_drivers; i++){
@@ -127,6 +128,8 @@ void DriverTiebreakSort(Season season){
 	}
 }
 
+/*sorts teams in case of an equal number of
+points of different teams in season*/
 void TeamTiebreakSort(Season season){
 		int sequence_length = 1; 
 	for(int i = 1; i < season->number_of_teams; i++){
@@ -163,7 +166,8 @@ const void QuickSort(void* items, int number_of_items, size_t field_type) {
    QuickSort(items + t + 1, items – t - 1);
 }
 
-void getBestResultsForTeams(Season season, int number_of_teams){
+/*adjusts best_result field for teams in season*/
+void getBestResultForTeams(Season season, int number_of_teams){
 	for(int i = 0; i < number_of_teams; i++){
 		int first_driver_last_result = season->*(teams+i)->first_driver->last_result;
 		int second_driver_last_result = season->*(teams+i)->first_driver->last_result;
@@ -255,6 +259,13 @@ Driver* setDrivers(char** season_data, int number_of_drivers, Team* teams){
 	return drivers;
 }
 
+void AddDriversInTeams(Season season){
+	for(int i = 0; i < season->number_of_drivers; i++){
+		driver = season->*(drivers+i); 
+		TeamAddDriver(DriverGetTeam(driver), driver);
+	}
+}
+
 Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	Season season = malloc(sizeof(*season));
 	int number_of_newline_chars = charCount(season_info, "\n");
@@ -265,9 +276,6 @@ Season SeasonCreate(SeasonStatus* status,const char* season_info){
 	season->number_of_drivers = getNumberOfDrivers(season_data, number_of_rows);
 	season->teams = getTeams(season_data, season->number_of_teams);
 	season->drivers = getDrivers(season_data, season->number_of_drivers, season->teams);
-	for(int i = 0; i < season->number_of_drivers; i++){
-		driver = season->*(drivers+i); 
-		TeamAddDriver(DriverGetTeam(driver), driver);
-	}
+	AddDriversInTeams(season);
 	return season;
 }
