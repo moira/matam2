@@ -93,7 +93,8 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	for (int i = 0; i < number_of_drivers; i++) {
 		for (int j = 0; j < number_of_drivers; j++) {
 			if (results[j] == season->drivers[i]->DriverId) {
-				season->drivers[i] += number_of_drivers-j-1;
+				season->drivers[i]->points += number_of_drivers-j-1;
+				season->drivers[i]->last_result = number_of_drivers-j-1;
 			}
 		}
 	}
