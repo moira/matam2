@@ -1,5 +1,4 @@
 #include "driver.h"
-#include <string.h>
 
 static const char* DriverStringDuplicate(char* str);
 

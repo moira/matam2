@@ -9,6 +9,7 @@ typedef struct team {
 	Driver second_driver;
 	Driver best_driver;
 	int points;
+	int best_result;
 } *Team;
 
 Team TeamCreate(TeamStatus* status, char* name) {
@@ -29,7 +30,7 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->name = TeamStringDuplicate(name);
 	team->first_driver = NULL;
 	team->second_driver = NULL;
-	team->best_driver = NULL;
+	team->best_result = 0;
 	team->points = 0;
 	if (status != NULL) {
 		*status = STATUS_OK;
@@ -97,7 +98,6 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 void TeamDestroy(Team team) {
 	free(team->first_driver);
 	free(team->second_driver);
-	free(team->best_driver);
 	free(team->name);
 	free(team);
 }

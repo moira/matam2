@@ -7,14 +7,12 @@
 
 #ifndef SEASON_H_
 #define SEASON_H_
-#define EXTRA_LINES 1
-#define LINES_PER_TEAM 3
-#define DRIVERS_PER_TEAM 2
 
 typedef struct season* Season;
 
 #include"team.h"
 #include"driver.h"
+
 
 typedef enum seasonStatus {
 	SEASON_OK,

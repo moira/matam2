@@ -23,6 +23,5 @@ TeamStatus TeamAddDriver(Team team, Driver driver);
 const char * TeamGetName(Team  team);
 Driver TeamGetDriver(Team  team, DriverNumber driver_number);
 int TeamGetPoints(Team  team, TeamStatus *status);
-static const char* StringDuplicate(const char* str);
 
 #endif /* TEAM_H_ */
