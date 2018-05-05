@@ -1,15 +1,20 @@
+#include "team.h"
+#include "season.h"
 #include "driver.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static const char* DriverStringDuplicate(char* str);
 
-typedef struct driver {
+struct driver {
 	int driverId;
 	const char* driver_name;
 	Team team;
 	int points;
-	int last_result;
 	Season season;
-} *Driver;
+	int last_result;
+};
 
 Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	Driver driver = malloc(sizeof(*driver));
@@ -19,9 +24,9 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 		}
 		return NULL;
 	}
-	if (driver_name = NULL || driverId < 0) {
+	if (driver_name == NULL || driverId < 0) {
 		if (driver != NULL) {
-			status = DRIVER_MEMORY_ERROR;
+			*status = DRIVER_MEMORY_ERROR;
 		}
 		free(driver);
 		return NULL;
@@ -33,13 +38,13 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	driver->last_result = 0;
 	driver->season = NULL;
 	if (status != NULL) {
-		status = DRIVER_STATUS_OK;
+		*status = DRIVER_STATUS_OK;
 	}
 	return driver;
 }
 
 void DriverDestroy(Driver driver) {
-	free(driver->driver_name);
+	//free(driver->driver_name); // does not compile
 	free(driver);
 }
 
@@ -78,14 +83,14 @@ void  DriverSetSeason(Driver driver, Season season) {
 
 DriverStatus DriverAddRaceResult(Driver driver, int position) {
 	if (position <= 0) {
-		return INVALID POSITION;
+		return INVALID_POSITION;
 	} else if (driver->season == NULL) {
 		return SEASON_NOT_ASSIGNED;
 	} else if (driver == NULL) {
 		return INVALID_DRIVER;
 	} else {
 		driver->points += position;
-		return STATUS_OK;
+		return DRIVER_STATUS_OK;
 	}
 }
 
