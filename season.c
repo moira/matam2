@@ -101,18 +101,17 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		for (int j = 0; j < season->number_of_drivers; j++) {
 			if (results[j] == DriverGetId(season->drivers[i])) {
-				season->drivers[i]->points += number_of_drivers-j-1;
-				season->drivers[i]->last_result = number_of_drivers-j-1;
+				DriverAddRaceResult(season->drivers[i], number_of_drivers-j-1);
+				season->drivers[i]->last_result = number_of_drivers-j-1; //we must do something here
 			}
 		}
 	}
 	QuickSort(season->drivers, season->number_of_drivers, points);
 	DriverTiebreakSort(season, results);
 	
-	int count = season->number_of_teams;
 	TeamStatus status;
 	for (int i = 0; i < number_of_teams; i++) {
-		season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);
+		season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);//and here
 	}
 	QuickSort(season->teams, season->number_of_teams, points);
 	TeamTiebreakSort(season, results);
