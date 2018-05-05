@@ -16,8 +16,8 @@ static int GetNumberOfDrivers(char** season_data, int arr_size);
 static Team* GetTeams(char** season_data, int number_of_teams);
 static int GetNumberOfTeams(int number_of_rows);
 static int GetYear(char** season_data);
-static char** StringSplit(char* string, int number_of_substrings, char delimiter);
-static int CharCount(char* string, char ch);
+static char** StringSplit(char* string, int number_of_substrings, const char* delimiter);
+static int CharCount(const char* string, char ch);
 static void GetBestResultForTeams(Season season, int number_of_teams);
 static void DriverTiebreakSort(Season season);
 static void TeamTiebreakSort(Season season);
@@ -190,9 +190,11 @@ static void GetBestResultForTeams(Season season, int number_of_teams){
 	}
 }
 
+/***********************SEASON_CREATE****************************************/
+
 /*counts number of appearances of a char in string*/
-static int CharCount(char* string, char ch){
-	int number_of_ch = 0
+static int CharCount(const char* string, char ch){
+	int number_of_ch = 0;
 	for(int i = 0; i < strlen(string); i++){
 		if(*(string+i) == ch){
 			number_of_ch++;
@@ -203,7 +205,7 @@ static int CharCount(char* string, char ch){
 
 /*splits string into array of substrings that were seperated with
 the delimiter in the original*/
-static char** StringSplit(char* string, int number_of_substrings, char delimiter){
+static char** StringSplit(char* string, int number_of_substrings, const char* delimiter){
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
 	for (int i = 0; i < number_of_substrings; ++i){
@@ -230,7 +232,7 @@ static Team* GetTeams(char** season_data, int number_of_teams){
 	Team* teams = malloc(sizeof(*teams)*number_of_teams);
 	int team_counter = 0;
 	for(int i = 1; team_counter < number_of_teams; i += 3){
-		TeamStatus team_status;
+		TeamStatus status;
 		*(teams+team_counter) = TeamCreate(&status,*(season_data+i)); 
 		team_counter++;
 	}
@@ -255,37 +257,39 @@ adjusts teams of drivers*/
 static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams){
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
 	int driver_count = 1;
-	int team_counter
+	int team_counter = 0;
 	for(int i = 1; driver_count <= number_of_drivers; i+=3){
 		for(int j = 1; j <= 2; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				DriverStatus status;
 				*(drivers+driver_count) = DriverCreate(&status, *(season_data+i+j), driver_count);
-				DriverSetTeam(*(drivers+driver_count), teams);
+				DriverSetTeam(*(drivers+driver_count), *(teams+team_counter));
 				driver_count++;
 			}
 		}
+		team_counter++;
 	}
 	return drivers;
 }
 
 static void AddDriversInTeams(Season season){
-	for(int i = 0; i < season->number_of_drivers; i++){
-		driver = season->*(drivers+i); 
-		TeamAddDriver(DriverGetTeam(driver), driver);
+	for(int i = 0; i < season->number_of_drivers; i++){ 
+		TeamAddDriver(DriverGetTeam(season->drivers[i]), season->drivers[i]);
 	}
 }
 
-Season SeasonCreate(SeasonStatus* status,static char* season_info){
+Season SeasonCreate(SeasonStatus* status, const char* season_info){
 	Season season = malloc(sizeof(*season));
-	int number_of_newline_chars = charCount(season_info, "\n");
-	number_of_rows = number_of_newline_chars;
-	char** season_data = stringSplit(season_info, number_of_rows, "\n");
-	season->year = getYear(season_data);
-	season->number_of_teams = getNumberOfTeams(number_of_rows);
-	season->number_of_drivers = getNumberOfDrivers(season_data, number_of_rows);
-	season->teams = getTeams(season_data, season->number_of_teams);
-	season->drivers = getDrivers(season_data, season->number_of_drivers, season->teams);
+	int number_of_newline_chars = CharCount(season_info, '\n');
+	int number_of_rows = number_of_newline_chars;
+	char* temp_string = malloc(sizeof(*temp_string)*(strlen(season_info)+1));
+	strcpy(temp_string, season_info);
+	char** season_data = StringSplit(temp_string, number_of_rows, "\n");
+	season->year = GetYear(season_data);
+	season->number_of_teams = GetNumberOfTeams(number_of_rows);
+	season->number_of_drivers = GetNumberOfDrivers(season_data, number_of_rows);
+	season->teams = GetTeams(season_data, season->number_of_teams);
+	season->drivers = GetDrivers(season_data, season->number_of_drivers, season->teams);
 	AddDriversInTeams(season);
 	return season;
 }
