@@ -1,14 +1,17 @@
+#include "team.h"
 #include "season.h"
-#include <string.h>
+#include "driver.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-static void QuickSort(int* items, int number_of_items);
+static void QuickSort(void* items, int number_of_items, size_t field_type);
 static void AddDriversInTeams(Season season);
 static Driver* SetDrivers(char** season_data, int number_of_drivers, Team* teams);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
 static void DriverTiebreakSort(Season season);
 static void AddDriversInTeams(Season season);
-static Driver* SetDrivers(char** season_data, int number_of_drivers, Team* teams);
+static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
 static Team* GetTeams(char** season_data, int number_of_teams);
 static int GetNumberOfTeams(int number_of_rows);
@@ -19,13 +22,13 @@ static void GetBestResultForTeams(Season season, int number_of_teams);
 static void DriverTiebreakSort(Season season);
 static void TeamTiebreakSort(Season season);
 
-typedef struct season{
+struct season{
 	int year;
 	int number_of_teams;
 	Team* teams;
 	int number_of_drivers;
 	Driver* drivers;
-}*Season;
+};
 
 
 void SeasonDestroy(Season season) {
@@ -101,18 +104,18 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		for (int j = 0; j < season->number_of_drivers; j++) {
 			if (results[j] == DriverGetId(season->drivers[i])) {
-				DriverAddRaceResult(season->drivers[i], number_of_drivers-j-1);
-				season->drivers[i]->last_result = number_of_drivers-j-1; //we must do something here
+				DriverAddRaceResult(season->drivers[i], season->number_of_drivers-j-1);
+				season->drivers[i]->last_result = season->number_of_drivers-j-1; //we must do something here
 			}
 		}
 	}
 	QuickSort(season->drivers, season->number_of_drivers, points);
 	DriverTiebreakSort(season, results);
 	
-	TeamStatus status;
-	for (int i = 0; i < number_of_teams; i++) {
-		season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);//and here
-	}
+	// TeamStatus status;
+	// for (int i = 0; i < number_of_teams; i++) {
+	// 	season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);//and here
+	// }
 	QuickSort(season->teams, season->number_of_teams, points);
 	TeamTiebreakSort(season, results);
 }	
@@ -249,7 +252,7 @@ static int GetNumberOfDrivers(char** season_data, int arr_size){
 
 /*adds drivers to the drivers field of season
 adjusts teams of drivers*/
-static Driver* SetDrivers(char** season_data, int number_of_drivers, Team* teams){
+static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams){
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
 	int driver_count = 1;
 	int team_counter
