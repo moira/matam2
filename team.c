@@ -1,29 +1,34 @@
 #include "team.h"
+#include "season.h"
+#include "driver.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static const char* TeamStringDuplicate(char* str);
 
-typedef struct team {
+struct team {
 	const char* name;
 	Driver first_driver;
 	Driver second_driver;
-	Driver best_driver;
 	int points;
 	int best_result;
-} *Team;
+};
+
+/*Given a team name, creates */
 
 Team TeamCreate(TeamStatus* status, char* name) {
 	Team team = malloc(sizeof(*team));
 	if (team == NULL) {
 		if (status != NULL) {
-			*status = MEMORY_ERROR;
+			*status = TEAM_MEMORY_ERROR;
 		}
 		return NULL;
 	}
 	if (name == NULL) { //https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=189
 		free(team);
 		if (status != NULL) {
-			*status = MEMORY_ERROR;
+			*status = TEAM_MEMORY_ERROR;
 		}
 		return NULL;
 	}
@@ -33,21 +38,21 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->best_result = 0;
 	team->points = 0;
 	if (status != NULL) {
-		*status = STATUS_OK;
+		*status = TEAM_STATUS_OK;
 	}
 	return team;
 }
 
 TeamStatus TeamAddDriver(Team team, Driver driver) {
-	if (team == NULL || driver = NULL) {
+	if (team == NULL || driver == NULL) {
 		return TEAM_NULL_PTR;
 	}
 	if (team->first_driver == NULL) {
 		team->first_driver = driver;
-		return STATUS_OK;
+		return TEAM_STATUS_OK;
 	} else if (team->second_driver == NULL) {
 		team->second_driver = driver;
-		return STATUS_OK;
+		return TEAM_STATUS_OK;
 	} else {
 		return TEAM_FULL;
 	}
@@ -75,6 +80,8 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 }
 
 int TeamGetPoints(Team team, TeamStatus *status) {
+	enum driverStatus new_status = DRIVER_STATUS_OK;
+	DriverStatus *driver_status = &new_status;
 	if (team == NULL) {
 		if (status != NULL) {
 			*status = TEAM_NULL_PTR;
@@ -82,14 +89,14 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 		return 0;
 	} else {
 		int points = 0;
-		if (team->first_driver != NULL) {
-			points += first_driver->points;
+		if (team->first_driver != NULL) { //check status and change team_status
+			points += DriverGetPoints(team->first_driver, driver_status);
 			if (team->second_driver != NULL) {
-				points += second_driver->points;
+				points += DriverGetPoints(team->second_driver, driver_status);
 			}
 		}
 		if (status != NULL) {
-			*status = STATUS_OK;
+			*status = TEAM_STATUS_OK;
 		}
 		return points;
 	}
@@ -98,7 +105,7 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 void TeamDestroy(Team team) {
 	free(team->first_driver);
 	free(team->second_driver);
-	free(team->name);
+	//free(team->name); //doesn't compile; it there a problem with freeing a const string?
 	free(team);
 }
 
