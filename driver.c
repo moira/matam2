@@ -7,8 +7,8 @@
 
 static const char* DriverStringDuplicate(char* str);
 
+#ifndef DRIVER_STRUCT_DEC_2
 #define DRIVER_STRUCT_DEC_1
-
 struct driver {
 	int driverId;
 	const char* driver_name;
@@ -17,6 +17,7 @@ struct driver {
 	Season season;
 	int last_result;
 };
+#endif
 
 Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	Driver driver = malloc(sizeof(*driver));

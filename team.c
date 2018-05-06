@@ -7,8 +7,8 @@
 
 static const char* TeamStringDuplicate(char* str);
 
+#ifndef TEAM_STRUCT_DEC_2
 #define TEAM_STRUCT_DEC_1
-
 struct team {
 	const char* name;
 	Driver first_driver;
@@ -16,6 +16,7 @@ struct team {
 	int points;
 	int best_result;
 };
+#endif
 
 /*Given a team name, creates */
 
