@@ -7,6 +7,8 @@
 
 static const char* TeamStringDuplicate(char* str);
 
+#define TEAM_STRUCT_DEC_1
+
 struct team {
 	const char* name;
 	Driver first_driver;

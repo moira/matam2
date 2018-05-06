@@ -7,6 +7,8 @@
 
 static const char* DriverStringDuplicate(char* str);
 
+#define DRIVER_STRUCT_DEC_1
+
 struct driver {
 	int driverId;
 	const char* driver_name;

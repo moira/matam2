@@ -22,6 +22,30 @@ static void GetBestResultForTeams(Season season, int number_of_teams);
 static void DriverTiebreakSort(Season season);
 static void TeamTiebreakSort(Season season);
 
+#ifndef DRIVER_STRUCT_DEC_1
+#define DRIVER_STRUCT_DEC_2
+struct driver {
+	int driverId;
+	const char* driver_name;
+	Team team;
+	int points;
+	Season season;
+	int last_result;
+};
+#endif 
+
+#ifndef TEAM_STRUCT_DEC_1
+#define TEAM_STRUCT_DEC_2
+struct team {
+	const char* name;
+	Driver first_driver;
+	Driver second_driver;
+	int points;
+	int best_result;
+};
+#endif
+
+
 struct season{
 	int year;
 	int number_of_teams;
@@ -179,13 +203,13 @@ static void QuickSort(void* items, int number_of_items, size_t field_type) {
 /*adjusts best_result field for teams in season*/
 static void GetBestResultForTeams(Season season, int number_of_teams){
 	for(int i = 0; i < number_of_teams; i++){
-		int first_driver_last_result = season->*(teams+i)->first_driver->last_result;
-		int second_driver_last_result = season->*(teams+i)->first_driver->last_result;
+		int first_driver_last_result = season->teams[i]->first_driver->last_result;
+		int second_driver_last_result = season->teams[i]->first_driver->last_result;
 		if (first_driver_last_result > second_driver_last_result){
-			season->*(teams+i)->best_result = first_driver_last_result;
+			season->teams[i]->best_result = first_driver_last_result;
 		}
 		else{
-			season->*(teams+i)->best_driver = second_driver_last_result;
+			season->teams[i]->best_driver = second_driver_last_result;
 		}
 	}
 }
