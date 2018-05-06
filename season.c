@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void QuickSort(void* items, int number_of_items, size_t field_type);
+static void QuickSortDrivers(Driver* drivers, int number_of_drivers, int i);
+static void QuickSortTeams(Team* items, int number_of_items, int i);
 static void AddDriversInTeams(Season season);
 static Driver* SetDrivers(char** season_data, int number_of_drivers, Team* teams);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
@@ -40,6 +41,7 @@ struct team {
 	const char* name;
 	Driver first_driver;
 	Driver second_driver;
+	Driver best_driver;
 	int points;
 	int best_result;
 };
@@ -133,15 +135,14 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 			}
 		}
 	}
-	QuickSort(season->drivers, season->number_of_drivers, points);
-	DriverTiebreakSort(season, results);
-	
-	// TeamStatus status;
-	// for (int i = 0; i < number_of_teams; i++) {
-	// 	season->*(teams+i)->points = TeamGetPoints(season->*(teams+i), status);//and here
-	// }
-	QuickSort(season->teams, season->number_of_teams, points);
-	TeamTiebreakSort(season, results);
+	QuickSortDrivers(season->drivers, season->number_of_drivers);
+	DriverTiebreakSort(season);
+	TeamStatus status;
+	for (int i = 0; i < season->number_of_teams; i++) {
+	season->teams[i]->points = TeamGetPoints(season->teams[i], &status);//and here
+	}
+	QuickSortTeams(season->teams, season->number_of_teams);
+	TeamTiebreakSort(season);
 }	
 
 /*sorts drivers in case of an equal number of
@@ -149,13 +150,14 @@ points of different drivers in season*/
 static void DriverTiebreakSort(Season season){
 	int sequence_length = 1; 
 	for(int i = 1; i < season->number_of_drivers; i++){
-		int current_driver_points = DriverGetPoints(season->*(drivers+i));
-		int previous_driver_points = DriverGetPoints(season->*(drivers+i-1));
+		DriverStatus status;
+		int current_driver_points = DriverGetPoints(season->drivers[i], &status);
+		int previous_driver_points = DriverGetPoints(season->drivers[i-1], &status);
 		if(current_driver_points == previous_driver_points){
 			sequence_length++;
 		}
 		else{
-			QuickSort(season->(drivers+i), sequence_length, last_result);
+			QuickSortDrivers(season->(drivers+i), sequence_length, last_result);
 			sequence_length = 1;
 			i++;
 		}
@@ -167,37 +169,60 @@ points of different teams in season*/
 static void TeamTiebreakSort(Season season){
 		int sequence_length = 1; 
 	for(int i = 1; i < season->number_of_teams; i++){
-		int current_team_points = TeamGetPoints(season->*(teams+i));
-		int previous_team_points = TeamGetPoints(season->*(teams+i-1));
+		TeamStatus status;
+		int current_team_points = TeamGetPoints(season->teams[i], &status);
+		int previous_team_points = TeamGetPoints(season->teams[i-1], &status);
 		if(current_team_points == previous_team_points){
 			sequence_length++;
 		}
 		else{
-			QuickSort(season->(teams+i), sequence_length, best_result);
+			QuickSortTeams(season->(teams+i), sequence_length, best_result);
 			sequence_length = 1;
 			i++;
 		}
 	}
 }
 
-static void QuickSort(void* items, int number_of_items, size_t field_type) {
-   int p, b = 1;
-   int t = number_of_items - 1;
-   if (number_of_items < 2)
+static void QuickSortDrivers(Driver* drivers, int number_of_drivers, int i) {//pls, take a look!!!
+	// 'i' suppose to be a starting point of an array
+   int p, b = i+1;
+   int t = number_of_drivers - 1;
+   if (number_of_drivers < 2)
       return;
-   swap(&items[0], &items[number_of_items/2]);
-   p = items[0]->field_type;
+   swap(&drivers[i], &drivers[i+number_of_items/2]);//??????????????????????????
+   p = drivers[i]->points;
    while(b <= t) {
-      while(t >= b && items[t]->field_type >= p )
+      while(t >= b && drivers[t]->points >= p )
          t--;
-      while(b <= t && items[b]->field_type < p)
+      while(b <= t && drivers[b]->points < p)
          b++; 
       if (b < t) 
-         swap(&items[b++], &items[t--]);
+         swap(drivers[b++], drivers[t--]);
    }
-   swap(&items[0], &items[t]);
-   QuickSort(items, t);
-   QuickSort(items + t + 1, items – t - 1);
+   swap(&items[0], &items[t]);//??????????????
+   QuickSort(items, t);//???????????????????????
+   QuickSort(items + t + 1, items – t - 1);//???????????????
+}
+
+static void QuickSortTeams(void* teams, int number_of_teams, int i) {//pls, take a look!!!!!
+	// 'i' suppose to be a starting point of an array
+   int p, b = i+1;
+   int t = number_of_teams - 1;
+   if (number_of_teams < 2)
+      return;
+   swap(&teams[i], &teams[i+number_of_teams/2]);//?????????????????????
+   p = teams[i]->best_driver->points;
+   while(b <= t) {
+      while(t >= b && teams[t]->fbest_driver->points >= p )
+         t--;
+      while(b <= t && teams[b]->best_driver->points < p)
+         b++; 
+      if (b < t) 
+         swap(&teams[b++], &teams[t--]);//??????????????????
+   }
+   swap(&teams[i], &teams[t]);//?????????????
+   QuickSort(items, t);//??????????????????
+   QuickSort(items + t + 1, items – t - 1);//?????????????????????
 }
 
 /*adjusts best_result field for teams in season*/

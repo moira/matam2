@@ -13,6 +13,7 @@ struct team {
 	const char* name;
 	Driver first_driver;
 	Driver second_driver;
+	Driver best_driver;
 	int points;
 	int best_result;
 };
