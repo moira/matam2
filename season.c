@@ -5,10 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void QuickSortDrivers(Driver* drivers, int number_of_drivers, int i);
-static void QuickSortTeams(Team* items, int number_of_items, int i);
+static void SwapDrivers(Driver driver1, Driver driver2);
+static void SwapTeams(Team team1, Team team2);
+static void QuickSortDrivers(Driver* drivers, int number_of_drivers);
+static void TiebreakQuickSortDrivers(Driver* drivers, int number_of_drivers); 
+static void QuickSortTeams(Team* teams, int number_of_teams);
+static void TiebreakQuickSortTeams(Team* teams, int number_of_teams);
 static void AddDriversInTeams(Season season);
-static Driver* SetDrivers(char** season_data, int number_of_drivers, Team* teams);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
 static void DriverTiebreakSort(Season season);
 static void AddDriversInTeams(Season season);
@@ -41,7 +44,6 @@ struct team {
 	const char* name;
 	Driver first_driver;
 	Driver second_driver;
-	Driver best_driver;
 	int points;
 	int best_result;
 };
@@ -127,6 +129,8 @@ int SeasonGetNumberOfTeams(Season season) {
 }
 
 SeasonStatus SeasonAddRaceResult(Season season, int* results) {
+	SeasonStatus season_status;
+	season_status = SEASON_OK;
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		for (int j = 0; j < season->number_of_drivers; j++) {
 			if (results[j] == DriverGetId(season->drivers[i])) {
@@ -138,11 +142,13 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	QuickSortDrivers(season->drivers, season->number_of_drivers);
 	DriverTiebreakSort(season);
 	TeamStatus status;
+	GetBestResultForTeams(season, season->number_of_teams);
 	for (int i = 0; i < season->number_of_teams; i++) {
 	season->teams[i]->points = TeamGetPoints(season->teams[i], &status);//and here
 	}
 	QuickSortTeams(season->teams, season->number_of_teams);
 	TeamTiebreakSort(season);
+	return status;
 }	
 
 /*sorts drivers in case of an equal number of
@@ -157,7 +163,7 @@ static void DriverTiebreakSort(Season season){
 			sequence_length++;
 		}
 		else{
-			QuickSortDrivers(season->(drivers+i), sequence_length, last_result);
+			TiebreakQuickSortDrivers(&(season->drivers[i]), sequence_length);
 			sequence_length = 1;
 			i++;
 		}
@@ -176,53 +182,103 @@ static void TeamTiebreakSort(Season season){
 			sequence_length++;
 		}
 		else{
-			QuickSortTeams(season->(teams+i), sequence_length, best_result);
+			TiebreakQuickSortTeams(&(season->teams[i]), sequence_length);
 			sequence_length = 1;
 			i++;
 		}
 	}
 }
 
-static void QuickSortDrivers(Driver* drivers, int number_of_drivers, int i) {//pls, take a look!!!
-	// 'i' suppose to be a starting point of an array
-   int p, b = i+1;
+static void SwapDrivers(Driver driver1, Driver driver2){
+	Driver temp_driver = driver1;
+	driver1 = driver2;
+	driver2 = temp_driver;
+}
+
+static void QuickSortDrivers(Driver* drivers, int number_of_drivers) {
+   int p, b = 1;
    int t = number_of_drivers - 1;
    if (number_of_drivers < 2)
       return;
-   swap(&drivers[i], &drivers[i+number_of_items/2]);//??????????????????????????
-   p = drivers[i]->points;
+   SwapDrivers(drivers[0], drivers[number_of_drivers/2]);
+   p = drivers[0]->points;
    while(b <= t) {
       while(t >= b && drivers[t]->points >= p )
          t--;
       while(b <= t && drivers[b]->points < p)
          b++; 
       if (b < t) 
-         swap(drivers[b++], drivers[t--]);
+         SwapDrivers(drivers[b++], drivers[t--]);
    }
-   swap(&items[0], &items[t]);//??????????????
-   QuickSort(items, t);//???????????????????????
-   QuickSort(items + t + 1, items – t - 1);//???????????????
+   SwapDrivers(drivers[0], drivers[t]);
+   QuickSortDrivers(drivers, t);
+   QuickSortDrivers(&drivers[t+1], number_of_drivers-t-1);
 }
 
-static void QuickSortTeams(void* teams, int number_of_teams, int i) {//pls, take a look!!!!!
-	// 'i' suppose to be a starting point of an array
-   int p, b = i+1;
+static void TiebreakQuickSortDrivers(Driver* drivers, int number_of_drivers) {
+   int p, b = 1;
+   int t = number_of_drivers - 1;
+   if (number_of_drivers < 2)
+      return;
+   SwapDrivers(drivers[0], drivers[number_of_drivers/2]);
+   p = drivers[0]->last_result;
+   while(b <= t) {
+      while(t >= b && drivers[t]->last_result >= p )
+         t--;
+      while(b <= t && drivers[b]->last_result < p)
+         b++; 
+      if (b < t) 
+         SwapDrivers(drivers[b++], drivers[t--]);
+   }
+   SwapDrivers(drivers[0], drivers[t]);
+   QuickSortDrivers(drivers, t);
+   QuickSortDrivers(&drivers[t+1], number_of_drivers-t-1);
+}
+
+static void SwapTeams(Team team1, Team team2){
+	Team temp_team = team1;
+	team1 = team2;
+	team2 = temp_team;
+}
+
+static void TiebreakQuickSortTeams(Team* teams, int number_of_teams) {
+   int p, b = 1;
    int t = number_of_teams - 1;
    if (number_of_teams < 2)
       return;
-   swap(&teams[i], &teams[i+number_of_teams/2]);//?????????????????????
-   p = teams[i]->best_driver->points;
+   SwapTeams(teams[0], teams[number_of_teams/2]);
+   p = teams[0]->best_result;
    while(b <= t) {
-      while(t >= b && teams[t]->fbest_driver->points >= p )
+      while(t >= b && teams[t]->best_result >= p )
          t--;
-      while(b <= t && teams[b]->best_driver->points < p)
+      while(b <= t && teams[b]->best_result < p)
          b++; 
       if (b < t) 
-         swap(&teams[b++], &teams[t--]);//??????????????????
+         SwapTeams(teams[b++], teams[t--]);
    }
-   swap(&teams[i], &teams[t]);//?????????????
-   QuickSort(items, t);//??????????????????
-   QuickSort(items + t + 1, items – t - 1);//?????????????????????
+   SwapTeams(teams[0], teams[t]);
+   QuickSortTeams(teams, t);
+   QuickSortTeams(&teams[t+1], number_of_teams-t-1);
+}
+
+static void QuickSortTeams(Team* teams, int number_of_teams) {
+   int p, b = 1;
+   int t = number_of_teams - 1;
+   if (number_of_teams < 2)
+      return;
+   SwapTeams(teams[0], teams[number_of_teams/2]);
+   p = teams[0]->points;
+   while(b <= t) {
+      while(t >= b && teams[t]->points >= p )
+         t--;
+      while(b <= t && teams[b]->points < p)
+         b++; 
+      if (b < t) 
+         SwapTeams(teams[b++], teams[t--]);
+   }
+   SwapTeams(teams[0], teams[t]);
+   QuickSortTeams(teams, t);
+   QuickSortTeams(&teams[t+1], number_of_teams-t-1);
 }
 
 /*adjusts best_result field for teams in season*/
@@ -234,7 +290,7 @@ static void GetBestResultForTeams(Season season, int number_of_teams){
 			season->teams[i]->best_result = first_driver_last_result;
 		}
 		else{
-			season->teams[i]->best_driver = second_driver_last_result;
+			season->teams[i]->best_result = second_driver_last_result;
 		}
 	}
 }
