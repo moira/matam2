@@ -314,6 +314,7 @@ static char** StringSplit(char* string, int number_of_substrings, const char* de
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
 	for (int i = 0; i < number_of_substrings; ++i){
+		*(string_arr+i) = malloc(sizeof(**(string_arr+i))*strlen(substring));
 		strcpy(*(string_arr+i), substring);
 		substring = strtok(NULL, delimiter);
 	}
