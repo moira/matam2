@@ -260,13 +260,13 @@ static int GetNumberOfDrivers(char** season_data, int arr_size){
 adjusts teams of drivers*/
 static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams){
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
-	int driver_count = 1;
+	int driver_count = 0;
 	int team_counter = 0;
 	for(int i = 1; driver_count <= number_of_drivers; i+=3){
 		for(int j = 1; j <= 2; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				DriverStatus status;
-				*(drivers+driver_count) = DriverCreate(&status, *(season_data+i+j), driver_count);
+				*(drivers+driver_count) = DriverCreate(&status, *(season_data+i+j), driver_count+1);
 				DriverSetTeam(*(drivers+driver_count), *(teams+team_counter));
 				driver_count++;
 			}
