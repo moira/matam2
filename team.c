@@ -7,16 +7,11 @@
 
 static const char* TeamStringDuplicate(char* str);
 
-#ifndef TEAM_STRUCT_DEC_2
-#define TEAM_STRUCT_DEC_1
 struct team {
 	const char* name;
 	Driver first_driver;
 	Driver second_driver;
-	int points;
-	int best_result;
 };
-#endif
 
 /*Given a team name, creates */
 
@@ -38,8 +33,6 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	team->name = TeamStringDuplicate(name);
 	team->first_driver = NULL;
 	team->second_driver = NULL;
-	team->best_result = 0;
-	team->points = 0;
 	if (status != NULL) {
 		*status = TEAM_STATUS_OK;
 	}
@@ -53,7 +46,7 @@ TeamStatus TeamAddDriver(Team team, Driver driver) {
 	if (team->first_driver == NULL) {
 		team->first_driver = driver;
 		return TEAM_STATUS_OK;
-	} else if (team->second_driver == NULL) {
+	} else if (team->second_driver == NULL && driver != team->first_driver) {
 		team->second_driver = driver;
 		return TEAM_STATUS_OK;
 	} else {
@@ -106,9 +99,9 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 }
 
 void TeamDestroy(Team team) {
-	free(team->first_driver);
-	free(team->second_driver);
-	//free(team->name); //doesn't compile; it there a problem with freeing a const string?
+	DriverDestroy(team->first_driver);
+	DriverDestroy(team->second_driver);
+	//free((void*)team->name);
 	free(team);
 }
 
@@ -116,4 +109,3 @@ static const char* TeamStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	return copy ? strcpy(copy, str) : NULL;
 }
-
