@@ -4,49 +4,48 @@
 
 char* RemoveFirstAppearance(char* string, char* word);
 
-//I'm so not sure that it is what they really wanted
-//At least, there are no memory leaks
-
 int main () {
 	//simple case
-	char* test1 = RemoveFirstAppearance("abc", "ab");
-	printf ("remove ab from abc: %s\n", test1);
+	char* test = RemoveFirstAppearance("abc", "ab");
+	printf ("remove ab from abc: %s\n", test);
+	free(test);
 	//the word is empty
-	char* test2 = RemoveFirstAppearance("ma", "");
-	printf ("remove '' from ma: %s\n", test2);
+	test = RemoveFirstAppearance("ma", "");
+	printf ("remove '' from ma: %s\n", test);
+	free(test);
 	//the string is empty
-	char* test3 = RemoveFirstAppearance("", "ma");
-	printf ("remove ma from '': %s\n", test3);
+	test = RemoveFirstAppearance("", "ma");
+	printf ("remove ma from '': %s\n", test);
+	free(test);
 	//the string is shorter than the word
-	char* test4 = RemoveFirstAppearance("ma", "mamama");
-	printf ("remove mamama from ma: %s\n", test4);
+	test = RemoveFirstAppearance("ma", "mamama");
+	printf ("remove mamama from ma: %s\n", test);
+	free(test);
 	//there are 0 occurrences of the word in the string
-	char* test5 = RemoveFirstAppearance("abbc", "abc");
-	printf ("remove abc from abbc: %s\n", test5);
+	test = RemoveFirstAppearance("abbc", "abc");
+	printf ("remove abc from abbc: %s\n", test);
+	free(test);
 	//there is more than one occurrence of the word in the string
-	char* test6 = RemoveFirstAppearance("RabRab", "ab");
-	printf ("remove ab from RabRab: %s\n", test6);
+	test = RemoveFirstAppearance("RabRab", "ab");
+	printf ("remove ab from RabRab: %s\n", test);
+	free(test);
 	//overlapping substrings
-	char* test7 = RemoveFirstAppearance("ababa", "aba");
-	printf ("remove aba from ababa: %s\n", test7);
+	test = RemoveFirstAppearance("ababa", "aba");
+	printf ("remove aba from ababa: %s\n", test);
+	free(test);
 	//identical strings
-	char* test8 = RemoveFirstAppearance("ababa", "ababa");
-	printf ("remove ababa from ababa: %s\n", test8);
-	//just two empty strings
-	char* test9 = RemoveFirstAppearance("", ""); //? https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=182 check once more
-	printf ("remove ' ' from ' ': %s\n", test9);
-	free(test1);
-	free(test2);
-	free(test3);
-	free(test4);
-	free(test5);
-	free(test6);
-	free(test7);
-	free(test8);
-	free(test9);
+	test = RemoveFirstAppearance("ababa", "ababa");
+	printf ("remove ababa from ababa: %s\n", test);
+	free(test);
 	return 0;
 }
 
+/*Removes the first appearance of one sequence of characters (word)
+  from another (string), returns the reduced string.
+  If the string is shorter than the word,
+  or the word is not met with in the string,
+  or memory allocation has failed, –
+  returns null.*/
 char* RemoveFirstAppearance(char* string, char* word) {
 	if (string == NULL || word == NULL) {
 		return NULL;
