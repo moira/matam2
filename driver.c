@@ -7,18 +7,17 @@
 
 static const char* DriverStringDuplicate(char* str);
 
-#ifndef DRIVER_STRUCT_DEC_2
-#define DRIVER_STRUCT_DEC_1
 struct driver {
 	int driverId;
-	const char* driver_name;
+	const char* name;
 	Team team;
 	int points;
 	Season season;
-	int last_result;
 };
-#endif
 
+/*Given a name string and an integer ID, creates a driver instance.
+  Sets status to DRIVER_STATUS_OK if the instance was created,
+  sets status to the error type if an error occured.*/
 Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	Driver driver = malloc(sizeof(*driver));
 	if (driver == NULL) {
@@ -27,18 +26,17 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 		}
 		return NULL;
 	}
-	if (driver_name == NULL || driverId < 0) {
-		if (driver != NULL) {
+	if (driver_name == NULL || driverId <= 0) {
+		if (status != NULL) {
 			*status = DRIVER_MEMORY_ERROR;
 		}
 		free(driver);
 		return NULL;
 	}
-	driver->driver_name = DriverStringDuplicate(driver_name);
+	driver->name = DriverStringDuplicate(driver_name);
 	driver->driverId = driverId;
 	driver->team = NULL;
 	driver->points = 0;
-	driver->last_result = 0;
 	driver->season = NULL;
 	if (status != NULL) {
 		*status = DRIVER_STATUS_OK;
@@ -47,7 +45,7 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 }
 
 void DriverDestroy(Driver driver) {
-	//free(driver->driver_name); // does not compile
+	//free((void*)driver->name);
 	free(driver);
 }
 
@@ -55,7 +53,7 @@ const char* DriverGetName(Driver driver) {
 	if (driver == NULL) {
 		return NULL;
 	} else {
-		return driver->driver_name;
+		return driver->name;
 	}
 }
 
@@ -76,21 +74,25 @@ Team DriverGetTeam(Driver driver) {
 }
 
 void  DriverSetTeam(Driver driver, Team team) {
-	driver->team = team;
+	if (driver != NULL && team != NULL) { //add smth?
+		driver->team = team;
+	}
 }
 
 void  DriverSetSeason(Driver driver, Season season) {
-	driver->season = season;
-	driver->points = 0;
+	if (driver != NULL && season != NULL) {
+		driver->season = season;
+		driver->points = 0;
+	}
 }
 
 DriverStatus DriverAddRaceResult(Driver driver, int position) {
 	if (position <= 0) {
 		return INVALID_POSITION;
-	} else if (driver->season == NULL) {
-		return SEASON_NOT_ASSIGNED;
 	} else if (driver == NULL) {
 		return INVALID_DRIVER;
+	} else if (driver->season == NULL) {
+		return SEASON_NOT_ASSIGNED;
 	} else {
 		driver->points += position;
 		return DRIVER_STATUS_OK;
