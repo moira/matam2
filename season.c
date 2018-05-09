@@ -116,7 +116,7 @@ void SeasonDestroy(Season season) {
 	free(season->teams);
 	season->teams = NULL;
 	free(season);
-	seasn = NULL;
+	season = NULL;
 }
 
 /*Returns an array of drivers sorted by standing, from higher to lower*/
@@ -351,9 +351,18 @@ Season SeasonCreate(SeasonStatus* status, const char* season_info){
 	season->number_of_teams = GetNumberOfTeams(number_of_rows);
 	season->number_of_drivers = GetNumberOfDrivers(season_data, number_of_rows);
 	season->teams = GetTeams(season_data, season->number_of_teams);
+	if((season->teams == NULL) && status_is_valid){
+		*status = SEASON_MEMORY_ERROR;
+	}
 	season->drivers = GetDrivers(season_data, season->number_of_drivers, 
 		season->teams, season);
+	if((season->drivers == NULL) && status_is_valid){
+		*status = SEASON_MEMORY_ERROR;
+	}
 	season->last_results = malloc(sizeof(int)*(season->number_of_drivers));
+	if((season->last_results == NULL) && status_is_valid){
+		*status = SEASON_MEMORY_ERROR;
+	}
 	AddDriversInTeams(season);
 	for(int i = 0; i < number_of_rows; i++){
 		free(*(season_data+i));
