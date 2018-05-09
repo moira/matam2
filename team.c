@@ -13,18 +13,19 @@ struct team {
 	Driver second_driver;
 };
 
-/*Given a team name, creates */
-
+/*Given a team name string, creates a team.
+  Returns NULL in case of an error.
+  Error codes (appear in status):
+   */
 Team TeamCreate(TeamStatus* status, char* name) {
-	Team team = malloc(sizeof(*team));
-	if (team == NULL) {
+	if (name == NULL) {
 		if (status != NULL) {
 			*status = TEAM_MEMORY_ERROR;
 		}
 		return NULL;
 	}
-	if (name == NULL) { //https://moodle.technion.ac.il/mod/hsuforum/discuss.php?d=189
-		free(team);
+	Team team = malloc(sizeof(*team));
+	if (team == NULL) {
 		if (status != NULL) {
 			*status = TEAM_MEMORY_ERROR;
 		}
