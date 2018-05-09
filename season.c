@@ -39,6 +39,7 @@ struct season{
 /*Sorts an array of entities belonging to an instance of a season given
   a comparison function.*/
 static void sort (void** array, int n, CmpFunction compare, Season season) {
+	assert (season);
 	assert (array != NULL && compare != NULL);
 	for (int i = 0; i < n; i++) {
 		for (int j = i+1; j < n; j++) {
@@ -53,6 +54,8 @@ static void sort (void** array, int n, CmpFunction compare, Season season) {
 
 /*Sorts two teams according to their results in the season.*/ 
 static bool TeamIsBigger (void* a, void *b, Season season) {
+	assert (season);
+	assert (a && b);
 	TeamStatus team_status;
 	int a_points = TeamGetPoints(a, &team_status);
 	int b_points = TeamGetPoints(b, &team_status);
@@ -78,7 +81,8 @@ static bool TeamIsBigger (void* a, void *b, Season season) {
 }
 
 /*Sorts two drivers according to their results in the season.*/ 
-bool DriverIsBigger (void* a, void *b, Season season) { //last results!
+bool DriverIsBigger (void* a, void *b, Season season) {
+	assert (season);
 	DriverStatus driver_status;
 	int a_points = DriverGetPoints(a, &driver_status);
 	int b_points = DriverGetPoints(b, &driver_status);
