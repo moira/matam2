@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#define ROWS_PER_TEAM 3 //NEW DEFINES
+#define ROWS_PER_TEAM 3
 #define YEAR_ROWS 1
 #define DRIVERS_PER_TEAM 2
 
@@ -50,10 +50,11 @@ static void sort (void** array, int n, CmpFunction compare, Season season) {
 
 static bool TeamIsBigger (void* a, void *b, Season season) {
 	//assert(a && b);
-	enum teamStatus status = TEAM_STATUS_OK;
-	TeamStatus *team_status = &status;
-	int a_points = TeamGetPoints(a, team_status);
-	int b_points = TeamGetPoints(b, team_status);
+	// enum teamStatus status = TEAM_STATUS_OK;
+	// TeamStatus *team_status = &status;
+	TeamStatus team_status;
+	int a_points = TeamGetPoints(a, &team_status);
+	int b_points = TeamGetPoints(b, &team_status);
 	if (a_points != b_points) {
 		return a_points < b_points;
 	} else {
@@ -78,11 +79,12 @@ static bool TeamIsBigger (void* a, void *b, Season season) {
 }
 
 bool DriverIsBigger (void* a, void *b, Season season) { //last results!
-	enum driverStatus status = DRIVER_STATUS_OK;
-	DriverStatus *driver_status = &status;
+	// enum driverStatus status = DRIVER_STATUS_OK;
+	// DriverStatus *driver_status = &status;
+	DriverStatus driver_status;
 	//assert(a && b);
-	int a_points = DriverGetPoints(a, driver_status);
-	int b_points = DriverGetPoints(b, driver_status);
+	int a_points = DriverGetPoints(a, &driver_status);
+	int b_points = DriverGetPoints(b, &driver_status);
 	if (a_points != b_points) {
 		return a_points < b_points;
 	} else {
@@ -108,6 +110,7 @@ void SeasonDestroy(Season season) {
 	}
 	free(season->last_results);
 	free(season->drivers);
+	free(season->teams);
 	free(season);
 }
 
@@ -137,7 +140,7 @@ Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* stat
 	if (status != NULL) {
 		*status = SEASON_OK;
 	}
-	return season->drivers[position-1]; //facebook test #10 crashes here, it doesn't crash if you remove -1, but that doesn't look like right behavior to me 
+	return season->drivers[position-1]; 
 }
 
 /*Returns a pointer to an array of teams sorted by their standing in the season,
@@ -232,7 +235,7 @@ static char** StringSplit(char* string, int number_of_substrings, const char* de
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
 	for (int i = 0; i < number_of_substrings; ++i){
-		*(string_arr+i) = malloc(sizeof(**(string_arr+i))*strlen(substring));
+		*(string_arr+i) = malloc(strlen(substring)+1);
 		strcpy(*(string_arr+i), substring);
 		substring = strtok(NULL, delimiter);
 	}
