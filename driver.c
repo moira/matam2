@@ -120,5 +120,10 @@ int DriverGetPoints(Driver driver, DriverStatus* status) {
 
 static const char* DriverStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
-	return copy ? strcpy(copy, str) : NULL;
+	if (copy != NULL) {
+		strcpy(copy, str);
+		return copy;
+	} else {
+		return NULL;
+	}
 }
