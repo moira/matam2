@@ -208,10 +208,6 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	if (season == NULL || results == NULL) {
 		return SEASON_NULL_PTR;
 	}
-	// test
-	// for (int i = 0; i < season->number_of_drivers; i++) {
-	// 	printf("%d\n", results[i]);
-	// }
 	memcpy(season->last_results, results, 
 		(season->number_of_drivers)*sizeof(int));
 	for (int i = 0; i < season->number_of_drivers; i++) {
@@ -224,12 +220,6 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	sort((void*)(season->drivers), season->number_of_drivers, DriverIsBigger, 
 		season);
 	sort((void*)(season->teams), season->number_of_teams, TeamIsBigger, season);
-	// for (int i = 0; i < season->number_of_drivers; i++) {
-	// 	printf("%d\n", DriverGetId(season->drivers[i]));
-	// }
-	// for (int j = 0; j < season->number_of_teams; j++) {
-	// 	printf("%s\n", TeamGetName(season->teams[j]));
-	// }
 	return SEASON_OK;
 }	
 
