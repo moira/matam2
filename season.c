@@ -60,13 +60,9 @@ static bool TeamIsBigger (void* a, void *b, Season season) {
 		return a_points < b_points;
 	} else {
 		int first_a_id = DriverGetId(TeamGetDriver(a, FIRST_DRIVER));
-		printf("First is %d\n", first_a_id);
 		int second_a_id = DriverGetId(TeamGetDriver(a, SECOND_DRIVER));
-		printf("Second is %d\n", second_a_id);
 		int first_b_id = DriverGetId(TeamGetDriver(b, FIRST_DRIVER));
-		printf("First is %d\n", first_b_id);
 		int second_b_id = DriverGetId(TeamGetDriver(b, SECOND_DRIVER));
-		printf("Second is %d\n", second_b_id);
 		for (int i = 0; i < season->number_of_drivers; i++) {
 			if (season->last_results[i] == first_a_id || 
 				season->last_results[i] == second_a_id) {
