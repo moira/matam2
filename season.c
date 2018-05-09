@@ -244,7 +244,7 @@ static int GetYear(char** season_data){
 }
 
 static int GetNumberOfTeams(int number_of_rows){
-	int number_of_teams = (number_of_rows-)/(LINES_PER_TEAM);
+	int number_of_teams = (number_of_rows-YEAR_ROWS)/(ROWS_PER_TEAM);
 	return number_of_teams;
 }
 
@@ -252,7 +252,7 @@ static int GetNumberOfTeams(int number_of_rows){
 static Team* GetTeams(char** season_data, int number_of_teams){
 	Team* teams = malloc(sizeof(*teams)*number_of_teams);
 	int team_counter = 0;
-	for(int i = YEAR_ROWS team_counter < number_of_teams; i += ROWS_PER_TEAM){
+	for(int i = YEAR_ROWS; team_counter < number_of_teams; i += ROWS_PER_TEAM){
 		TeamStatus status;
 		*(teams+team_counter) = TeamCreate(&status,*(season_data+i)); 
 		team_counter++;
@@ -279,7 +279,7 @@ static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
 	int driver_count = 0;
 	int team_counter = 0;
-	for(int i = YEAR_ROWS; driver_count < number_of_drivers; i+=LINES_PER_TEAM){
+	for(int i = YEAR_ROWS; driver_count < number_of_drivers; i+=ROWS_PER_TEAM){
 		for(int j = 1; j <= DRIVERS_PER_TEAM; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				DriverStatus status;
