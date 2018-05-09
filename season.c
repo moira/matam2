@@ -7,6 +7,10 @@
 #include <stdbool.h>
 #include <assert.h>
 
+#define ROWS_PER_TEAM 3 //NEW DEFINES
+#define YEAR_ROWS 1
+#define DRIVERS_PER_TEAM 2
+
 typedef bool (*CmpFunction) (void*, void*, Season season);
 static void sort (void** array, int n, CmpFunction compare, Season season);
 static void AddDriversInTeams(Season season);
@@ -240,7 +244,7 @@ static int GetYear(char** season_data){
 }
 
 static int GetNumberOfTeams(int number_of_rows){
-	int number_of_teams = (number_of_rows-1)/(3);
+	int number_of_teams = (number_of_rows-)/(LINES_PER_TEAM);
 	return number_of_teams;
 }
 
@@ -248,7 +252,7 @@ static int GetNumberOfTeams(int number_of_rows){
 static Team* GetTeams(char** season_data, int number_of_teams){
 	Team* teams = malloc(sizeof(*teams)*number_of_teams);
 	int team_counter = 0;
-	for(int i = 1; team_counter < number_of_teams; i += 3){
+	for(int i = YEAR_ROWS team_counter < number_of_teams; i += ROWS_PER_TEAM){
 		TeamStatus status;
 		*(teams+team_counter) = TeamCreate(&status,*(season_data+i)); 
 		team_counter++;
@@ -259,8 +263,8 @@ static Team* GetTeams(char** season_data, int number_of_teams){
 /*gets number of drivers in season data array*/
 static int GetNumberOfDrivers(char** season_data, int arr_size){
 	int number_of_drivers = 0;
-	for(int i = 1; i < arr_size-2; i+=3){
-		for(int j = 1; j <= 2; j++){
+	for(int i = YEAR_ROWS; i < arr_size-DRIVERS_PER_TEAM; i+=ROWS_PER_TEAM){
+		for(int j = 1; j <= DRIVERS_PER_TEAM; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				number_of_drivers++;
 			}
@@ -275,8 +279,8 @@ static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
 	int driver_count = 0;
 	int team_counter = 0;
-	for(int i = 1; driver_count < number_of_drivers; i+=3){
-		for(int j = 1; j <= 2; j++){
+	for(int i = YEAR_ROWS; driver_count < number_of_drivers; i+=LINES_PER_TEAM){
+		for(int j = 1; j <= DRIVERS_PER_TEAM; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				DriverStatus status;
 				*(drivers+driver_count) = DriverCreate(&status, *(season_data+i+j), driver_count+1);
