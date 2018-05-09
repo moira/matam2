@@ -17,20 +17,23 @@ struct driver {
 
 /*Given a name string and an integer ID, creates a driver instance.
   Sets status to DRIVER_STATUS_OK if the instance was created,
-  sets status to the error type if an error occured.*/
+  sets status to the error code if an error occured.
+  Error codes:
+  DRIVER_MEMORY_ERROR – memory allocation failure,
+  driverId is not a positive integer, or driver_name is a null pointer,
+  according to the requirements.*/
 Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
-	Driver driver = malloc(sizeof(*driver));
-	if (driver == NULL) {
+	if (driver_name == NULL || driverId <= 0) {
 		if (status != NULL) {
 			*status = DRIVER_MEMORY_ERROR;
 		}
 		return NULL;
 	}
-	if (driver_name == NULL || driverId <= 0) {
+	Driver driver = malloc(sizeof(*driver));
+	if (driver == NULL) {
 		if (status != NULL) {
 			*status = DRIVER_MEMORY_ERROR;
 		}
-		free(driver);
 		return NULL;
 	}
 	driver->name = DriverStringDuplicate(driver_name);
@@ -44,6 +47,7 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 	return driver;
 }
 
+/*Given a pointer to the driver, destroys the driver instance.*/
 void DriverDestroy(Driver driver) {
 	if(driver == NULL){
 		return;
@@ -54,6 +58,8 @@ void DriverDestroy(Driver driver) {
 	driver = NULL;
 }
 
+/*Given a pointer to a driver, returns the driver's name.
+  Returns NULL when given a null pointer.*/
 const char* DriverGetName(Driver driver) {
 	if (driver == NULL) {
 		return NULL;
@@ -62,6 +68,8 @@ const char* DriverGetName(Driver driver) {
 	}
 }
 
+/*Given a pointer to a driver, returns the driver's ID.
+  Returns NULL when given a null pointer.*/
 int DriverGetId(Driver driver) {
 	if (driver == NULL) {
 		return 0;
@@ -70,6 +78,8 @@ int DriverGetId(Driver driver) {
 	}
 }
 
+/*Given a pointer to a driver, returns a pointer to the driver's team.
+  Returns NULL when given a null pointer.*/
 Team DriverGetTeam(Driver driver) {
 	if (driver == NULL) {
 		return NULL;
@@ -78,12 +88,16 @@ Team DriverGetTeam(Driver driver) {
 	}
 }
 
+/*Given a driver and a team, sets the driver's team to be this team.*/
 void  DriverSetTeam(Driver driver, Team team) {
-	if (driver != NULL && team != NULL) { //add smth?
+	if (driver != NULL && team != NULL) {
 		driver->team = team;
 	}
 }
 
+/*Given a driver and a season, adds this season to this driver instance. 
+  If the team was empty, they become the first driver, otherwise 
+  they become its second driver.*/
 void  DriverSetSeason(Driver driver, Season season) {
 	if (driver != NULL && season != NULL) {
 		driver->season = season;
@@ -91,19 +105,22 @@ void  DriverSetSeason(Driver driver, Season season) {
 	}
 }
 
+/*Given the driver's position in a race, updates their points.*/
 DriverStatus DriverAddRaceResult(Driver driver, int position) {
-	if (position <= 0) { //CHECK
+	if (position <= 0) {
 		return INVALID_POSITION;
 	} else if (driver == NULL) {
 		return INVALID_DRIVER;
 	} else if (driver->season == NULL) {
 		return SEASON_NOT_ASSIGNED;
 	} else {
-		driver->points += position;
+		driver->points += (SeasonGetNumberOfDrivers(driver->season) - position);
 		return DRIVER_STATUS_OK;
 	}
 }
 
+/*Given a driver, returns their points.
+  Returns 0 when given a null pointer.*/
 int DriverGetPoints(Driver driver, DriverStatus* status) {
 	if (driver == NULL) {
 		if (status != NULL) {
@@ -118,13 +135,9 @@ int DriverGetPoints(Driver driver, DriverStatus* status) {
 	}
 }
 
-/*Creates a const copy of a given string. Returns NULL if string is NULL.*/
+/*Creates an immutable copy of a given string. 
+  Returns NULL if the string is NULL.*/
 static const char* DriverStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
-	if (copy != NULL) {
-		strcpy(copy, str);
-		return copy;
-	} else {
-		return NULL;
-	}
+	return copy ? strcpy(copy, str) : NULL;
 }
