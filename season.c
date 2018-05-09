@@ -297,11 +297,24 @@ static void AddDriversInTeams(Season season){
 }
 
 Season SeasonCreate(SeasonStatus* status, const char* season_info){
+	bool status_is_valid = status != NULL;//!new!
+	if (status_is_valid) {//!moved!
+		*status = SEASON_OK;
+	}
 	Season season = malloc(sizeof(*season));
+	if(season == NULL && status_is_valid){//new status check
+		*status = SEASON_MEMORY_ERROR;
+	}
 	int number_of_rows = CharCount(season_info, '\n');
 	char* temp_string = malloc(strlen(season_info)+1); //changed
+	if(temp_string == NULL && status_is_valid){//new status check
+		*status = SEASON_MEMORY_ERROR;
+	}
 	strcpy(temp_string, season_info);
 	char** season_data = StringSplit(temp_string, number_of_rows, "\n");
+	if(season_data == NULL && status_is_valid){//new status check
+		*status = SEASON_MEMORY_ERROR;
+	}
 	season->year = GetYear(season_data);
 	season->number_of_teams = GetNumberOfTeams(number_of_rows);
 	season->number_of_drivers = GetNumberOfDrivers(season_data, number_of_rows);
@@ -309,8 +322,10 @@ Season SeasonCreate(SeasonStatus* status, const char* season_info){
 	season->drivers = GetDrivers(season_data, season->number_of_drivers, season->teams, season);
 	season->last_results = malloc(sizeof(int)*(season->number_of_drivers));
 	AddDriversInTeams(season);
-	if (status != NULL) {
-		*status = SEASON_OK;
+	for(int i = 0; i < number_of_rows; i++){//new setting memory to be free
+		free(*(season_data+i));//new setting memory to be free
 	}
+	free(season_data);//new setting memory to be free
+	free(temp_string);//new setting memory to be free
 	return season;
 }
