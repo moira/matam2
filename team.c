@@ -116,8 +116,17 @@ void TeamDestroy(Team team) {
 	team = NULL;
 }
 
+// static const char* TeamStringDuplicate(char* str) {
+// 	char* copy = malloc(strlen(str) + 1);
+// 	return copy ? strcpy(copy, str) : NULL;
+// }
+
 static const char* TeamStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
-	return copy ? strcpy(copy, str) : NULL;
+	if (copy != NULL) {
+		strcpy(copy, str);
+		return copy;
+	} else {
+		return NULL;
+	}
 }
-
