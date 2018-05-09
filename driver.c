@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* DriverStringDuplicate(char* str);
+static const char* DriverStringDuplicate(char* str);
 
 struct driver {
 	int driverId;
-	char* name;
+	const char* name;
 	Team team;
 	int points;
 	Season season;
@@ -45,8 +45,13 @@ Driver DriverCreate(DriverStatus* status, char* driver_name, int driverId) {
 }
 
 void DriverDestroy(Driver driver) {
-	free(driver->name);
+	if(driver == NULL){
+		return;
+	}
+	free((void*)(driver->name));
+	driver->name = NULL;
 	free(driver);
+	driver = NULL;
 }
 
 const char* DriverGetName(Driver driver) {
@@ -113,7 +118,7 @@ int DriverGetPoints(Driver driver, DriverStatus* status) {
 	}
 }
 
-static char* DriverStringDuplicate(char* str) {
+static const char* DriverStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	return copy ? strcpy(copy, str) : NULL;
 }

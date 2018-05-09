@@ -100,6 +100,9 @@ bool DriverIsBigger (void* a, void *b, Season season) { //last results!
 
 /*Frees the memory allocated to season and all its elements*/
 void SeasonDestroy(Season season) {
+	if(season == NULL){
+		return;
+	}
 	for (int i = 0; i < season->number_of_teams; i++) {
 		TeamDestroy(season->teams[i]);
 	}

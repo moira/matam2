@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* TeamStringDuplicate(char* str);
+static const char* TeamStringDuplicate(char* str);
 
 struct team {
-	char* name;
+	const char* name;
 	Driver first_driver;
 	Driver second_driver;
 };
@@ -99,13 +99,24 @@ int TeamGetPoints(Team team, TeamStatus *status) {
 }
 
 void TeamDestroy(Team team) {
-	DriverDestroy(team->first_driver);
-	DriverDestroy(team->second_driver);
-	free(team->name);
+	if(team == NULL){
+		return;
+	}
+	if(team->first_driver != NULL){
+		DriverDestroy(team->first_driver);
+		team->first_driver = NULL;
+	}
+	if(team->second_driver != NULL){
+		DriverDestroy(team->second_driver);
+		team->second_driver = NULL;
+	}
+	free((void*)(team->name));
+	team->name = NULL; 
 	free(team);
+	team = NULL;
 }
 
-static char* TeamStringDuplicate(char* str) {
+static const char* TeamStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	return copy ? strcpy(copy, str) : NULL;
 }
