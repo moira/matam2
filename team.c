@@ -13,14 +13,15 @@ struct team {
 	Driver second_driver;
 };
 
-/*Given a team name string, creates a team.
-  Returns NULL in case of an error.
+/*Given a name string, returns a new team with this name.
+  Returns NULL in case of a failure.
   Error codes (appear in status):
-   */
+  TEAM_MEMORY_ERROR – failure to allocate memory,
+  TEAM_NULL_PTR – name string was a null pointer.*/
 Team TeamCreate(TeamStatus* status, char* name) {
 	if (name == NULL) {
 		if (status != NULL) {
-			*status = TEAM_MEMORY_ERROR;
+			*status = TEAM_NULL_PTR;
 		}
 		return NULL;
 	}
@@ -40,6 +41,10 @@ Team TeamCreate(TeamStatus* status, char* name) {
 	return team;
 }
 
+/*Given a team and a driver, adds the driver to the team.
+  Returns the status. Error codes (appear in status): 
+  TEAM_NULL_PTR – one of the arguments is a null pointer,
+  TEAM_FULL – the team already has two drivers.*/
 TeamStatus TeamAddDriver(Team team, Driver driver) {
 	if (team == NULL || driver == NULL) {
 		return TEAM_NULL_PTR;
@@ -55,6 +60,8 @@ TeamStatus TeamAddDriver(Team team, Driver driver) {
 	}
 }
 
+/*Given a pointer to team, returns its name.
+  Returns NULL if the pointer to the team is NULL.*/
 const char* TeamGetName(Team team) {
 	if (team == NULL) {
 		return NULL;
@@ -63,6 +70,9 @@ const char* TeamGetName(Team team) {
 	}
 }
 
+/*Given a team and a number – FIRST_DRIVER or SECOND_DRIVER – returns
+  the index to the respective driver of this team.
+  Returns NULL in case of an error.*/
 Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 	if (team == NULL) {
 		return NULL;
@@ -76,29 +86,32 @@ Driver TeamGetDriver(Team team, DriverNumber driver_number) {
 	}
 }
 
+/*Given a team and a pointer to TeamStatus, returns the current number
+  of the team's points.
+  Error codes (appear in status):
+  TEAM_NULL_PTR – team is a null pointer.*/
 int TeamGetPoints(Team team, TeamStatus *status) {
-	enum driverStatus new_status = DRIVER_STATUS_OK;
-	DriverStatus *driver_status = &new_status;
 	if (team == NULL) {
 		if (status != NULL) {
 			*status = TEAM_NULL_PTR;
 		}
 		return 0;
-	} else {
-		int points = 0;
-		if (team->first_driver != NULL) { //check status and change team_status
-			points += DriverGetPoints(team->first_driver, driver_status);
-			if (team->second_driver != NULL) {
-				points += DriverGetPoints(team->second_driver, driver_status);
-			}
-		}
-		if (status != NULL) {
-			*status = TEAM_STATUS_OK;
-		}
-		return points;
 	}
+	DriverStatus driver_status;
+	int points = 0;
+	if (team->first_driver != NULL) {
+		points += DriverGetPoints(team->first_driver, &driver_status);
+		if (team->second_driver != NULL) {
+			points += DriverGetPoints(team->second_driver, &driver_status);
+		}
+	}
+	if (status != NULL) {
+		*status = TEAM_STATUS_OK;
+	}
+	return points;
 }
 
+/*Given a team name, destroys the team and its drivers.*/
 void TeamDestroy(Team team) {
 	if(team == NULL){
 		return;
@@ -112,22 +125,14 @@ void TeamDestroy(Team team) {
 		team->second_driver = NULL;
 	}
 	free((void*)(team->name));
-	team->name = NULL; 
+	team->name = NULL;
 	free(team);
 	team = NULL;
 }
 
-// static const char* TeamStringDuplicate(char* str) {
-// 	char* copy = malloc(strlen(str) + 1);
-// 	return copy ? strcpy(copy, str) : NULL;
-// }
-
+/*Given a string, creates its immutable copy.
+  Returns NULL in case of a memory allocation failure.*/
 static const char* TeamStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
-	if (copy != NULL) {
-		strcpy(copy, str);
-		return copy;
-	} else {
-		return NULL;
-	}
+	return copy ? strcpy(copy, str) : NULL;
 }
