@@ -23,7 +23,7 @@ static int GetNumberOfTeams(int number_of_rows);
 static int GetYear(char** season_data);
 static char** StringSplit(char* string, int number_of_substrings, 
 	const char* delimiter);
-static int CharCount(const char* string, char ch);
+static int CharCount(const char* string, char character);
 static bool TeamIsBigger (void* a, void *b, Season season);
 static bool DriverIsBigger (void* a, void *b, Season season);
 
@@ -36,7 +36,8 @@ struct season{
 	int* last_results;
 };
 
-
+/*Sorts an array of entities belonging to an instance of a season given
+  a comparison function.*/
 static void sort (void** array, int n, CmpFunction compare, Season season) {
 	assert (array != NULL && compare != NULL);
 	for (int i = 0; i < n; i++) {
@@ -50,10 +51,8 @@ static void sort (void** array, int n, CmpFunction compare, Season season) {
 	}
 }
 
+/*Sorts two teams according to their results in the season.*/ 
 static bool TeamIsBigger (void* a, void *b, Season season) {
-	//assert(a && b);
-	// enum teamStatus status = TEAM_STATUS_OK;
-	// TeamStatus *team_status = &status;
 	TeamStatus team_status;
 	int a_points = TeamGetPoints(a, &team_status);
 	int b_points = TeamGetPoints(b, &team_status);
@@ -82,11 +81,9 @@ static bool TeamIsBigger (void* a, void *b, Season season) {
 	return false;
 }
 
+/*Sorts two drivers according to their results in the season.*/ 
 bool DriverIsBigger (void* a, void *b, Season season) { //last results!
-	// enum driverStatus status = DRIVER_STATUS_OK;
-	// DriverStatus *driver_status = &status;
 	DriverStatus driver_status;
-	//assert(a && b);
 	int a_points = DriverGetPoints(a, &driver_status);
 	int b_points = DriverGetPoints(b, &driver_status);
 	if (a_points != b_points) {
@@ -113,9 +110,13 @@ void SeasonDestroy(Season season) {
 		TeamDestroy(season->teams[i]);
 	}
 	free(season->last_results);
+	season->last_results=NULL;
 	free(season->drivers);
+	season->drivers = NULL;
 	free(season->teams);
+	season->teams = NULL;
 	free(season);
+	seasn = NULL;
 }
 
 /*Returns an array of drivers sorted by standing, from higher to lower*/
@@ -123,7 +124,7 @@ Driver* SeasonGetDriversStandings(Season season) {
 	if (season == NULL) {
 		return NULL;
 	}
-	Driver* drivers = malloc(sizeof(Driver)*season->number_of_drivers);
+	Driver* drivers = malloc(sizeof(Driver)*(season->number_of_drivers));
 	drivers = memcpy(drivers, season->drivers, 
 		(season->number_of_drivers)*sizeof(Driver));
 	return drivers;
@@ -164,7 +165,7 @@ Team* SeasonGetTeamsStandings(Season season) {
 }
 
 /*Given a position in the season (positive integer), returns the team occupying 
-  this position. Sets status to error type if an error occurs.*/
+  this position. Sets status to the error type if an error occurs.*/
 Team SeasonGetTeamByPosition(Season season, int position, 
 	SeasonStatus* status) {
 	if (season == NULL) {
@@ -202,46 +203,45 @@ int SeasonGetNumberOfTeams(Season season) {
 	return season->number_of_teams;
 }
 
+/*Given the results of the last race, updates the season.*/
 SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	if (season == NULL || results == NULL) {
 		return SEASON_NULL_PTR;
 	}
-	for (int i = 0; i < season->number_of_drivers; i++) {
-		printf("%d\n", results[i]);
-	}
-	//other statuses
-	//season->last_results = malloc(sizeof(*(season->last_results))*season->number_of_drivers);
+	// test
+	// for (int i = 0; i < season->number_of_drivers; i++) {
+	// 	printf("%d\n", results[i]);
+	// }
 	memcpy(season->last_results, results, 
 		(season->number_of_drivers)*sizeof(int));
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		for (int j = 0; j < season->number_of_drivers; j++) {
 			if (results[j] == DriverGetId(season->drivers[i])) {
-				DriverAddRaceResult(season->drivers[i], 
-					season->number_of_drivers-j-1);
+				DriverAddRaceResult(season->drivers[i], j+1);
 			}
 		}
 	}
 	sort((void*)(season->drivers), season->number_of_drivers, DriverIsBigger, 
 		season);
 	sort((void*)(season->teams), season->number_of_teams, TeamIsBigger, season);
-	for (int i = 0; i < season->number_of_drivers; i++) {
-		printf("%d\n", DriverGetId(season->drivers[i]));
-	}
-	for (int j = 0; j < season->number_of_teams; j++) {
-		printf("%s\n", TeamGetName(season->teams[j]));
-	}
+	// for (int i = 0; i < season->number_of_drivers; i++) {
+	// 	printf("%d\n", DriverGetId(season->drivers[i]));
+	// }
+	// for (int j = 0; j < season->number_of_teams; j++) {
+	// 	printf("%s\n", TeamGetName(season->teams[j]));
+	// }
 	return SEASON_OK;
 }	
 
 /*counts number of appearances of a char in string*/
-static int CharCount(const char* string, char ch){
-	int number_of_ch = 0;
+static int CharCount(const char* string, char character){
+	int number_of_characters = 0;
 	for(int i = 0; i < strlen(string); i++){
-		if(*(string+i) == ch){
-			number_of_ch++;
+		if(*(string+i) == character){
+			number_of_characters++;
 		}
 	}
-	return number_of_ch;
+	return number_of_characters;
 }
 
 /*splits string into array of substrings that were seperated with
@@ -265,6 +265,7 @@ static int GetYear(char** season_data){
 	return year;
 }
 
+/*gets number of teams given the number of rows in the season_info file*/
 static int GetNumberOfTeams(int number_of_rows){
 	int number_of_teams = (number_of_rows-YEAR_ROWS)/(ROWS_PER_TEAM);
 	return number_of_teams;
@@ -318,29 +319,32 @@ static Driver* GetDrivers(char** season_data, int number_of_drivers,
 	return drivers;
 }
 
+/*Given an instance of season, adds drivers in teams.*/
 static void AddDriversInTeams(Season season){
 	for(int i = 0; i < season->number_of_drivers; i++){ 
 		TeamAddDriver(DriverGetTeam(season->drivers[i]), season->drivers[i]);
 	}
 }
 
+/*Given a file containing the information about the season, initializes an
+  instance of a season.*/
 Season SeasonCreate(SeasonStatus* status, const char* season_info){
-	bool status_is_valid = status != NULL;//!new!
-	if (status_is_valid) {//!moved!
+	bool status_is_valid = status != NULL;
+	if (status_is_valid) {
 		*status = SEASON_OK;
 	}
 	Season season = malloc(sizeof(*season));
-	if(season == NULL && status_is_valid){//new status check
+	if(season == NULL && status_is_valid){
 		*status = SEASON_MEMORY_ERROR;
 	}
 	int number_of_rows = CharCount(season_info, '\n');
-	char* temp_string = malloc(strlen(season_info)+1); //changed
-	if(temp_string == NULL && status_is_valid){//new status check
+	char* temp_string = malloc(strlen(season_info)+1);
+	if(temp_string == NULL && status_is_valid){
 		*status = SEASON_MEMORY_ERROR;
 	}
 	strcpy(temp_string, season_info);
 	char** season_data = StringSplit(temp_string, number_of_rows, "\n");
-	if(season_data == NULL && status_is_valid){//new status check
+	if(season_data == NULL && status_is_valid){
 		*status = SEASON_MEMORY_ERROR;
 	}
 	season->year = GetYear(season_data);
@@ -351,10 +355,10 @@ Season SeasonCreate(SeasonStatus* status, const char* season_info){
 		season->teams, season);
 	season->last_results = malloc(sizeof(int)*(season->number_of_drivers));
 	AddDriversInTeams(season);
-	for(int i = 0; i < number_of_rows; i++){//new setting memory to be free
-		free(*(season_data+i));//new setting memory to be free
+	for(int i = 0; i < number_of_rows; i++){
+		free(*(season_data+i));
 	}
-	free(season_data);//new setting memory to be free
-	free(temp_string);//new setting memory to be free
+	free(season_data);
+	free(temp_string);
 	return season;
 }
