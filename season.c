@@ -15,12 +15,14 @@ typedef bool (*CmpFunction) (void*, void*, Season season);
 static void sort (void** array, int n, CmpFunction compare, Season season);
 static void AddDriversInTeams(Season season);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
-static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams, Season season);
+static Driver* GetDrivers(char** season_data, int number_of_drivers, 
+	Team* teams, Season season);
 static int GetNumberOfDrivers(char** season_data, int arr_size);
 static Team* GetTeams(char** season_data, int number_of_teams);
 static int GetNumberOfTeams(int number_of_rows);
 static int GetYear(char** season_data);
-static char** StringSplit(char* string, int number_of_substrings, const char* delimiter);
+static char** StringSplit(char* string, int number_of_substrings, 
+	const char* delimiter);
 static int CharCount(const char* string, char ch);
 static bool TeamIsBigger (void* a, void *b, Season season);
 static bool DriverIsBigger (void* a, void *b, Season season);
@@ -67,10 +69,12 @@ static bool TeamIsBigger (void* a, void *b, Season season) {
 		int second_b_id = DriverGetId(TeamGetDriver(b, SECOND_DRIVER));
 		printf("Second is %d\n", second_b_id);
 		for (int i = 0; i < season->number_of_drivers; i++) {
-			if (season->last_results[i] == first_a_id || season->last_results[i] == second_a_id) {
+			if (season->last_results[i] == first_a_id || 
+				season->last_results[i] == second_a_id) {
 				return false;
 			}
-			if (season->last_results[i] == first_b_id || season->last_results[i] == second_b_id) {
+			if (season->last_results[i] == first_b_id || 
+				season->last_results[i] == second_b_id) {
 				return true;
 			}
 		}
@@ -119,12 +123,16 @@ Driver* SeasonGetDriversStandings(Season season) {
 	if (season == NULL) {
 		return NULL;
 	}
-	return season->drivers;
+	Driver* drivers = malloc(sizeof(Driver)*season->number_of_drivers);
+	drivers = memcpy(drivers, season->drivers, 
+		(season->number_of_drivers)*sizeof(Driver));
+	return drivers;
 }
 
-/*Given a position in the season (positive integer), returns the driver occupying this position.
-  Sets status to error type if an error occurs.*/
-Driver SeasonGetDriverByPosition(Season season, int position, SeasonStatus* status) {
+/*Given a position in the season (positive integer), returns the driver 
+  occupying this position. Sets status to error type if an error occurs.*/
+Driver SeasonGetDriverByPosition(Season season, int position, 
+	SeasonStatus* status) {
 	if (season == NULL) {
 		if (status != NULL) {
 			*status = SEASON_NULL_PTR;
@@ -149,12 +157,16 @@ Team* SeasonGetTeamsStandings(Season season) {
 	if (season == NULL) {
 		return NULL;
 	}
-	return season->teams;
+	Team* teams = malloc(sizeof(Team)*(season->number_of_teams));
+	teams = memcpy(teams, season->teams, 
+		(season->number_of_teams)*sizeof(Team));
+	return teams;
 }
 
-/*Given a position in the season (positive integer), returns the team occupying this position.
-  Sets status to error type if an error occurs.*/
-Team SeasonGetTeamByPosition(Season season, int position, SeasonStatus* status) {
+/*Given a position in the season (positive integer), returns the team occupying 
+  this position. Sets status to error type if an error occurs.*/
+Team SeasonGetTeamByPosition(Season season, int position, 
+	SeasonStatus* status) {
 	if (season == NULL) {
 		if (status != NULL) {
 			*status = SEASON_NULL_PTR;
@@ -199,15 +211,18 @@ SeasonStatus SeasonAddRaceResult(Season season, int* results) {
 	}
 	//other statuses
 	//season->last_results = malloc(sizeof(*(season->last_results))*season->number_of_drivers);
-	memcpy(season->last_results, results, (season->number_of_drivers)*sizeof(int));
+	memcpy(season->last_results, results, 
+		(season->number_of_drivers)*sizeof(int));
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		for (int j = 0; j < season->number_of_drivers; j++) {
 			if (results[j] == DriverGetId(season->drivers[i])) {
-				DriverAddRaceResult(season->drivers[i], season->number_of_drivers-j-1);
+				DriverAddRaceResult(season->drivers[i], 
+					season->number_of_drivers-j-1);
 			}
 		}
 	}
-	sort((void*)(season->drivers), season->number_of_drivers, DriverIsBigger, season);
+	sort((void*)(season->drivers), season->number_of_drivers, DriverIsBigger, 
+		season);
 	sort((void*)(season->teams), season->number_of_teams, TeamIsBigger, season);
 	for (int i = 0; i < season->number_of_drivers; i++) {
 		printf("%d\n", DriverGetId(season->drivers[i]));
@@ -231,7 +246,8 @@ static int CharCount(const char* string, char ch){
 
 /*splits string into array of substrings that were seperated with
 the delimiter in the original*/
-static char** StringSplit(char* string, int number_of_substrings, const char* delimiter){
+static char** StringSplit(char* string, int number_of_substrings, 
+	const char* delimiter){
 	char** string_arr = malloc(sizeof(*string_arr)*number_of_substrings);
 	char* substring = strtok(string, delimiter);
 	for (int i = 0; i < number_of_substrings; ++i){
@@ -281,7 +297,8 @@ static int GetNumberOfDrivers(char** season_data, int arr_size){
 
 /*adds drivers to the drivers field of season
 adjusts teams of drivers*/
-static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams, Season season){
+static Driver* GetDrivers(char** season_data, int number_of_drivers, 
+	Team* teams, Season season){
 	Driver* drivers = malloc(sizeof(*drivers)*number_of_drivers);
 	int driver_count = 0;
 	int team_counter = 0;
@@ -289,7 +306,8 @@ static Driver* GetDrivers(char** season_data, int number_of_drivers, Team* teams
 		for(int j = 1; j <= DRIVERS_PER_TEAM; j++){
 			if(strcmp(*(season_data+i+j), "None")){
 				DriverStatus status;
-				*(drivers+driver_count) = DriverCreate(&status, *(season_data+i+j), driver_count+1);
+				*(drivers+driver_count) = DriverCreate(&status, 
+					*(season_data+i+j), driver_count+1);
 				DriverSetTeam(*(drivers+driver_count), *(teams+team_counter));
 				DriverSetSeason(*(drivers+driver_count), season);
 				driver_count++;
@@ -329,7 +347,8 @@ Season SeasonCreate(SeasonStatus* status, const char* season_info){
 	season->number_of_teams = GetNumberOfTeams(number_of_rows);
 	season->number_of_drivers = GetNumberOfDrivers(season_data, number_of_rows);
 	season->teams = GetTeams(season_data, season->number_of_teams);
-	season->drivers = GetDrivers(season_data, season->number_of_drivers, season->teams, season);
+	season->drivers = GetDrivers(season_data, season->number_of_drivers, 
+		season->teams, season);
 	season->last_results = malloc(sizeof(int)*(season->number_of_drivers));
 	AddDriversInTeams(season);
 	for(int i = 0; i < number_of_rows; i++){//new setting memory to be free
