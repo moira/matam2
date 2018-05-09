@@ -118,6 +118,7 @@ int DriverGetPoints(Driver driver, DriverStatus* status) {
 	}
 }
 
+/*Creates a const copy of a given string. Returns NULL if string is NULL.*/
 static const char* DriverStringDuplicate(char* str) {
 	char* copy = malloc(strlen(str) + 1);
 	if (copy != NULL) {
